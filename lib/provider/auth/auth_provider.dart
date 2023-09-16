@@ -1,6 +1,8 @@
 import 'dart:convert';
 
 import 'package:bookshare/model/model_user.dart';
+import 'package:bookshare/network/callback.dart';
+import 'package:bookshare/network/request_route.dart';
 import 'package:bookshare/utils/Logger.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -8,8 +10,43 @@ import '../../config/account.dart';
 import '../../config/const.dart';
 
 class AuthProvider extends ChangeNotifier {
-
   bool authExpired = false;
+  RequestRouter requestRouter = RequestRouter();
+
+  Map<String, String?> fieldErrors = {
+    'name': null,
+    'email': null,
+    'password': null,
+    'mobile': null,
+  };
+
+  createAccount(Map<String, dynamic> requestBody, RequestCallbacks requestCallbacks) {
+    fieldErrors.forEach((key, _) {
+      fieldErrors[key] = null;
+    });
+    requestRouter.register(
+        requestBody,
+        RequestCallbacks(onSuccess: (response) {
+          Map<String, dynamic> jsonMap = json.decode(response);
+          AccountConfig.userDetail = UserDetail.fromJson(jsonMap);
+          storeDetails(AccountConfig.userDetail);
+          requestCallbacks.onSuccess(response);
+        }, onError: (error) {
+          Map<String, dynamic> responseMap = jsonDecode(error);
+          try {
+            responseMap.forEach((key, value) {
+              if (fieldErrors.containsKey(key)) {
+                var errorMessage = value is List ? value.join('\n') : value.toString();
+                fieldErrors[key] = errorMessage;
+              }
+            });
+          } catch (e) {
+            print(e.toString());
+          }
+
+          notifyListeners();
+        }));
+  }
 
   Future<bool> isLoggedIn() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -35,6 +72,4 @@ class AuthProvider extends ChangeNotifier {
     Logger.log(jsonString);
     return await prefs.setString(SharedPrefKeys.login.name, jsonString);
   }
-
-
 }

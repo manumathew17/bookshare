@@ -22,12 +22,12 @@ class NetworkRequest {
     try {
       final response = await http.get(Uri.parse(API_ENDPOINT + route).replace(queryParameters: queryParams), headers: getHeaders());
 
-      if (response.statusCode == 200) {
+      if (successStatusCodes.contains(response.statusCode)) {
         final responseData = response.body;
         Logger.log(responseData);
         requestCallbacks.onSuccess(responseData.toString());
       } else {
-        _showError(response.body);
+       // _showError(response.body);
         requestCallbacks.onError(response.body);
       }
       Loader.hide();
@@ -47,7 +47,7 @@ class NetworkRequest {
         body: json.encode(requestBody),
       );
 
-      if (response.statusCode == 200) {
+      if (successStatusCodes.contains(response.statusCode)) {
         final responseData = response.body;
         Logger.log(responseData);
         Loader.hide();
@@ -55,7 +55,7 @@ class NetworkRequest {
       } else {
         Loader.hide();
         print(response.body);
-        _showError(response.body);
+       // _showError(response.body);
         requestCallbacks.onError(response.body);
       }
     } catch (e) {
@@ -77,12 +77,12 @@ class NetworkRequest {
         body: jsonEncode(requestBody),
       );
 
-      if (response.statusCode == 200) {
+      if (successStatusCodes.contains(response.statusCode)) {
         final responseData = response.body;
         Logger.log(responseData);
         requestCallbacks.onSuccess(responseData);
       } else {
-        _showError(response.body);
+       // _showError(response.body);
         requestCallbacks.onError(response.body);
       }
     } catch (e) {
@@ -105,10 +105,11 @@ class NetworkRequest {
       } else {
         print(response.body);
         //_showError(response.body);
-        requestCallbacks.onError(response.body);
+        requestCallbacks.onError(jsonDecode(response.body));
       }
       Loader.hide();
     } catch (e) {
+      print(e.toString());
       _showInternetError();
       Loader.hide();
     }
