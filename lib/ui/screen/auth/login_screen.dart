@@ -82,10 +82,7 @@ class LoginScreenState extends State<LoginScreen> {
                 width: 50.w,
                 child: Lottie.asset('assets/lottie/login.json'),
               ),
-              const Text(
-                "Login",
-                style: header20,
-              ),
+
               Padding(
                 padding: EdgeInsets.all(20.0),
                 child: Column(
@@ -100,9 +97,18 @@ class LoginScreenState extends State<LoginScreen> {
                             boxShadow: [BoxShadow(color: Color.fromRGBO(143, 148, 251, .2), blurRadius: 20.0, offset: Offset(0, 10))]),
                         child: Column(
                           children: <Widget>[
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            const Text(
+                              "Login",
+                              style: header20,
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
                             Container(
                               padding: EdgeInsets.all(8.0),
-                              decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Colors.grey))),
                               child: TextFormField(
                                 controller: _emailController,
                                 validator: (value) {
@@ -112,11 +118,17 @@ class LoginScreenState extends State<LoginScreen> {
                                   return null;
                                 },
                                 decoration: InputDecoration(
-                                    border: InputBorder.none, hintText: "Email or Phone number", hintStyle: TextStyle(color: Colors.grey[900])),
+                                    border: const OutlineInputBorder(
+                                        borderSide: BorderSide.none,
+                                        borderRadius: BorderRadius.all(Radius.circular(14))
+                                    ),
+                                    filled: true,
+                                    fillColor: textWhiteGrey,
+                                    hintText: "Email or Phone number", hintStyle: TextStyle(color: Colors.grey[900])),
                               ),
                             ),
                             Container(
-                              padding: EdgeInsets.all(8.0),
+                              padding: const EdgeInsets.all(8.0),
                               child: TextFormField(
                                 controller: _passwordController,
                                 validator: (value) {
@@ -127,7 +139,12 @@ class LoginScreenState extends State<LoginScreen> {
                                 },
                                 obscureText: _passwordVisible,
                                 decoration: InputDecoration(
-                                  border: InputBorder.none,
+                                  border: const OutlineInputBorder(
+                                      borderSide: BorderSide.none,
+                                      borderRadius: BorderRadius.all(Radius.circular(14))
+                                  ),
+                                  filled: true,
+                                  fillColor: textWhiteGrey,
                                   hintText: "Password",
                                   hintStyle: TextStyle(color: Colors.grey[900]),
                                   suffixIcon: IconButton(
@@ -138,15 +155,16 @@ class LoginScreenState extends State<LoginScreen> {
                                   ),
                                 ),
                               ),
-                            )
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            Button(width: 100, text: "Login", onClick: () => {_validateAndSubmit()}),
                           ],
                         ),
                       ),
                     ),
-                    SizedBox(
-                      height: 30,
-                    ),
-                    Button(width: 100, text: "Login", onClick: () => {_validateAndSubmit()}),
+
                     // Container(
                     //   height: 45,
                     //   decoration: BoxDecoration(

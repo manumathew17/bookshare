@@ -64,7 +64,7 @@ class CategoryState extends State<CategoryScreen> {
             ),
             SizedBox(height: 2.h), // Add spacing between icon and text
             Text(item.text,
-                style: const TextStyle(color: const Color(0xff909193), fontWeight: FontWeight.w400, fontStyle: FontStyle.normal, fontSize: 10.0),
+                style: const TextStyle(color: Color(0xff212121), fontWeight: FontWeight.w600, fontStyle: FontStyle.normal, fontSize: 12.0),
                 textAlign: TextAlign.center)
           ],
         ),

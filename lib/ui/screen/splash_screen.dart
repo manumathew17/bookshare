@@ -1,3 +1,4 @@
+import 'package:bookshare/config/account.dart';
 import 'package:bookshare/provider/auth/auth_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -57,7 +58,11 @@ class SplashScreenState extends State<SplashScreen> {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     final isLogged = await authProvider.isLoggedIn();
     if (isLogged) {
-      context.go('/home');
+      if (AccountConfig.userDetail.user.address == "") {
+        context.go('/add-address');
+      } else {
+        context.go('/home');
+      }
     } else {
       context.go('/login');
     }

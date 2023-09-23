@@ -1,10 +1,12 @@
-
+import 'package:bookshare/provider/auth/auth_provider.dart';
 import 'package:bookshare/theme/colors.dart';
 import 'package:flashy_tab_bar2/flashy_tab_bar2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 
 import 'dashboard_screen.dart';
@@ -18,8 +20,10 @@ class HomeScreen extends StatefulWidget {
 }
 
 class HomeScreenState extends State<HomeScreen> {
-  int _selectedIndex = 0;
+  late AuthProvider authProvider;
 
+  int _selectedIndex = 0;
+  DateTime now = DateTime.now();
   final List<GridItem> gridItems = [
     GridItem("Horror", "horror"),
     GridItem("Romance", "romance"),
@@ -31,6 +35,13 @@ class HomeScreenState extends State<HomeScreen> {
     GridItem("Self - help", "self-help"),
   ];
   static const List<Widget> _homeScreensWidgets = [DashBoardScreen(), MyReadingScreen(), HomeScreen(), HomeScreen(), HomeScreen(), HomeScreen()];
+
+  @override
+  void initState() {
+    super.initState();
+    authProvider = Provider.of<AuthProvider>(context, listen: false);
+    authProvider.getUserProfile();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,10 +58,10 @@ class HomeScreenState extends State<HomeScreen> {
             child: GestureDetector(
               onTap: () => {GoRouter.of(context).push("/profile")},
               child: SizedBox(
-                width: 7.w,
-                height: 7.w,
+                width: 5.w,
+                height: 5.w,
                 child: ClipRRect(
-                  borderRadius: BorderRadius.circular(10.w / 2),
+                  borderRadius: BorderRadius.circular(5.w / 2),
                   child: Image.network(
                     "https://imgv3.fotor.com/images/gallery/Realistic-Female-Profile-Picture.jpg",
                     fit: BoxFit.cover,
@@ -74,7 +85,6 @@ class HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      drawer: const Drawer(),
       body: Stack(fit: StackFit.expand, clipBehavior: Clip.antiAliasWithSaveLayer, children: [
         Padding(
           padding: const EdgeInsets.only(left: 20.0, right: 20.0),
@@ -87,9 +97,9 @@ class HomeScreenState extends State<HomeScreen> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text("25",
+                  Text(DateFormat('dd').format(now),
                       style:
-                          const TextStyle(color: const Color(0xff000000), fontWeight: FontWeight.w700, fontStyle: FontStyle.normal, fontSize: 36.0),
+                          const TextStyle(color: Color(0xff000000), fontWeight: FontWeight.w700, fontStyle: FontStyle.normal, fontSize: 36.0),
                       textAlign: TextAlign.center),
                   SizedBox(
                     width: 2.w,
@@ -98,13 +108,13 @@ class HomeScreenState extends State<HomeScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Text("Tuesday",
+                      Text(DateFormat('EEEE').format(now),
                           style: const TextStyle(
-                              color: const Color(0xff909193), fontWeight: FontWeight.w400, fontStyle: FontStyle.normal, fontSize: 14.0),
+                              color: Color(0xff909193), fontWeight: FontWeight.w400, fontStyle: FontStyle.normal, fontSize: 14.0),
                           textAlign: TextAlign.center),
-                      Text("July 2023",
+                      Text("${DateFormat('MMM').format(now)} ${DateFormat('y').format(now)}",
                           style: const TextStyle(
-                              color: const Color(0xff909193), fontWeight: FontWeight.w400, fontStyle: FontStyle.normal, fontSize: 14.0),
+                              color: Color(0xff909193), fontWeight: FontWeight.w400, fontStyle: FontStyle.normal, fontSize: 14.0),
                           textAlign: TextAlign.center)
                     ],
                   )
@@ -117,17 +127,17 @@ class HomeScreenState extends State<HomeScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text("New Arrivals",
+                  const Text("New Arrivals",
                       style:
-                          const TextStyle(color: const Color(0xff000000), fontWeight: FontWeight.w700, fontStyle: FontStyle.normal, fontSize: 16.0),
+                          TextStyle(color: Color(0xff000000), fontWeight: FontWeight.w700, fontStyle: FontStyle.normal, fontSize: 16.0),
                       textAlign: TextAlign.center),
                   GestureDetector(
                     onTap: () {
                       GoRouter.of(context).push("/new-arrival");
                     },
-                    child: Text("View More >",
+                    child: const Text("View More >",
                         style:
-                            const TextStyle(color: const Color(0xfff5c02d), fontWeight: FontWeight.w700, fontStyle: FontStyle.normal, fontSize: 10.0),
+                            TextStyle(color: Color(0xfff5c02d), fontWeight: FontWeight.w700, fontStyle: FontStyle.normal, fontSize: 10.0),
                         textAlign: TextAlign.center),
                   )
                 ],
@@ -211,17 +221,17 @@ class HomeScreenState extends State<HomeScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text("Categories",
+                  const Text("Categories",
                       style:
-                          const TextStyle(color: const Color(0xff000000), fontWeight: FontWeight.w700, fontStyle: FontStyle.normal, fontSize: 16.0),
+                          TextStyle(color: Color(0xff000000), fontWeight: FontWeight.w700, fontStyle: FontStyle.normal, fontSize: 16.0),
                       textAlign: TextAlign.center),
                   GestureDetector(
                     onTap: () {
                       GoRouter.of(context).push("/category");
                     },
-                    child: Text("View More >",
+                    child: const Text("View More >",
                         style:
-                            const TextStyle(color: const Color(0xfff5c02d), fontWeight: FontWeight.w700, fontStyle: FontStyle.normal, fontSize: 10.0),
+                            TextStyle(color: Color(0xfff5c02d), fontWeight: FontWeight.w700, fontStyle: FontStyle.normal, fontSize: 10.0),
                         textAlign: TextAlign.center),
                   )
                 ],
@@ -253,7 +263,7 @@ class HomeScreenState extends State<HomeScreen> {
                       height: 16.w,
                       decoration: BoxDecoration(
                         color: yellowPrimary,
-                        borderRadius: BorderRadius.only(
+                        borderRadius: const BorderRadius.only(
                           topLeft: Radius.circular(20.0),
                           topRight: Radius.circular(20.0),
                         ),
@@ -406,28 +416,44 @@ class HomeScreenState extends State<HomeScreen> {
 
         items: [
           FlashyTabBarItem(
-            icon: const Icon(Icons.home_filled),
+            icon: SizedBox(
+              width: 24, // Adjust the width as needed
+              height: 24, // Adjust the height as needed
+              child: Image.asset('assets/icons/search.png'), // Replace with the actual asset path
+            ),
             title: const Text(
               'Home',
               style: TextStyle(color: primary),
             ),
           ),
           FlashyTabBarItem(
-            icon: const Icon(Icons.search),
+            icon: SizedBox(
+              width: 24, // Adjust the width as needed
+              height: 24, // Adjust the height as needed
+              child: Image.asset('assets/icons/search.png'), // Replace with the actual asset path
+            ),
             title: const Text(
               'Search',
               style: TextStyle(color: primary),
             ),
           ),
           FlashyTabBarItem(
-            icon: const Icon(Icons.add_shopping_cart_outlined),
+            icon: SizedBox(
+              width: 24, // Adjust the width as needed
+              height: 24, // Adjust the height as needed
+              child: Image.asset('assets/icons/mybook.png'), // Replace with the actual asset path
+            ),
             title: const Text(
               'Reading',
               style: TextStyle(color: primary),
             ),
           ),
           FlashyTabBarItem(
-            icon: const Icon(Icons.people),
+            icon: SizedBox(
+              width: 24, // Adjust the width as needed
+              height: 24, // Adjust the height as needed
+              child: Image.asset('assets/icons/lent.png'), // Replace with the actual asset path
+            ),
             title: const Text(
               'Catalog',
               style: TextStyle(color: primary),
@@ -438,8 +464,10 @@ class HomeScreenState extends State<HomeScreen> {
           //   title: Text('Chat'),
           // ),
           FlashyTabBarItem(
-            icon: const Icon(
-              Icons.monetization_on,
+            icon: SizedBox(
+              width: 24, // Adjust the width as needed
+              height: 24, // Adjust the height as needed
+              child: Image.asset('assets/icons/refer.png'), // Replace with the actual asset path
             ),
             title: const Text(
               'Profile',
@@ -449,6 +477,9 @@ class HomeScreenState extends State<HomeScreen> {
         ],
         onItemSelected: (index) {
           switch (index) {
+            case 1:
+              GoRouter.of(context).push("/search");
+              break;
             case 2:
               GoRouter.of(context).push("/my-read");
               break;
@@ -474,7 +505,7 @@ class HomeScreenState extends State<HomeScreen> {
             ),
             SizedBox(height: 2.h), // Add spacing between icon and text
             Text(item.text,
-                style: const TextStyle(color: const Color(0xff909193), fontWeight: FontWeight.w400, fontStyle: FontStyle.normal, fontSize: 10.0),
+                style: const TextStyle(color: const Color(0xff181818), fontWeight: FontWeight.w600, fontStyle: FontStyle.normal, fontSize: 12.0),
                 textAlign: TextAlign.center)
           ],
         ),

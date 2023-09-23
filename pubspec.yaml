@@ -47,6 +47,8 @@ dependencies:
   lottie: ^2.6.0
   intl: ^0.18.1
   email_validator: ^2.1.17
+  shimmer: ^3.0.0
+  image_picker: ^1.0.4
 
 dev_dependencies:
   flutter_test:

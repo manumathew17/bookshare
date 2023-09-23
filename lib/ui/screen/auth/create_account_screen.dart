@@ -69,9 +69,9 @@ class CreateAccountScreenState extends State<CreateAccountScreen> {
       authProvider.createAccount(
           requestBody,
           RequestCallbacks(onSuccess: (response) {
-            Sparkle.show(context);
-            _generalSnackBar.showSuccessSnackBar("Account created successfully");
-            context.go("/home");
+
+            //_generalSnackBar.showSuccessSnackBar("Account created successfully");
+            context.go('/add-address');
           }, onError: (error) {
             _generalSnackBar.showErrorSnackBar("Error occurred while creating account please check the details");
           }));
@@ -92,14 +92,12 @@ class CreateAccountScreenState extends State<CreateAccountScreen> {
                   width: 50.w,
                   child: Lottie.asset('assets/lottie/createacc.json'),
                 ),
-                const Text(
-                  "Create new account",
-                  style: header20,
-                ),
+
                 Padding(
-                  padding: EdgeInsets.all(20.0),
+                  padding: const EdgeInsets.all(20.0),
                   child: Column(
                     children: <Widget>[
+
                       Form(
                         key: _formKey,
                         child: Container(
@@ -107,12 +105,15 @@ class CreateAccountScreenState extends State<CreateAccountScreen> {
                           decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(10),
-                              boxShadow: [BoxShadow(color: Color.fromRGBO(143, 148, 251, .2), blurRadius: 20.0, offset: Offset(0, 10))]),
+                              boxShadow: const [BoxShadow(color: Color.fromRGBO(143, 148, 251, .2), blurRadius: 20.0, offset: Offset(0, 10))]),
                           child: Column(
                             children: <Widget>[
+                              const Text(
+                                "Create new account",
+                                style: header20,
+                              ),
                               Container(
-                                padding: EdgeInsets.all(8.0),
-                                decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Colors.grey))),
+                                padding: const EdgeInsets.all(8.0),
                                 child: TextFormField(
                                   autovalidateMode: AutovalidateMode.onUserInteraction,
                                   controller: _nameController,
@@ -123,7 +124,12 @@ class CreateAccountScreenState extends State<CreateAccountScreen> {
                                     return null;
                                   },
                                   decoration: InputDecoration(
-                                      border: InputBorder.none,
+                                      border: const OutlineInputBorder(
+                                          borderSide: BorderSide.none,
+                                          borderRadius: BorderRadius.all(Radius.circular(14))
+                                      ),
+                                      filled: true,
+                                      fillColor: textWhiteGrey,
                                       hintText: "Name",
                                       errorText: authProvider.fieldErrors['name'],
                                       hintStyle: TextStyle(
@@ -133,7 +139,6 @@ class CreateAccountScreenState extends State<CreateAccountScreen> {
                               ),
                               Container(
                                 padding: EdgeInsets.all(8.0),
-                                decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Colors.grey))),
                                 child: TextFormField(
                                   controller: _emailController,
                                   validator: (value) {
@@ -145,15 +150,20 @@ class CreateAccountScreenState extends State<CreateAccountScreen> {
                                     return null;
                                   },
                                   decoration: InputDecoration(
-                                      border: InputBorder.none,
+                                      border: const OutlineInputBorder(
+                                          borderSide: BorderSide.none,
+                                          borderRadius: BorderRadius.all(Radius.circular(14))
+                                      ),
+                                      filled: true,
+                                      fillColor: textWhiteGrey,
                                       hintText: "Email",
                                       errorText: authProvider.fieldErrors['email'],
                                       hintStyle: TextStyle(color: Colors.grey[900])),
                                 ),
                               ),
                               Container(
-                                padding: EdgeInsets.all(8.0),
-                                decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Colors.grey))),
+                                padding: const EdgeInsets.all(8.0),
+
                                 child: TextFormField(
                                   controller: _mobileNumberController,
                                   validator: (value) {
@@ -168,17 +178,19 @@ class CreateAccountScreenState extends State<CreateAccountScreen> {
                                   keyboardType: TextInputType.number,
                                   decoration: InputDecoration(
                                     errorText: authProvider.fieldErrors['mobile'],
-                                    border: InputBorder.none,
+                                    border: const OutlineInputBorder(
+                                        borderSide: BorderSide.none,
+                                        borderRadius: BorderRadius.all(Radius.circular(14))
+                                    ),
+                                    filled: true,
+                                    fillColor: textWhiteGrey,
                                     hintText: "Mobile number",
                                     hintStyle: TextStyle(color: Colors.grey[900]),
-                                    prefixText: '+91 ',
-                                    prefixStyle: TextStyle(color: Colors.black),
                                   ),
                                 ),
                               ),
                               Container(
-                                padding: EdgeInsets.all(8.0),
-                                decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Colors.grey))),
+                                padding: const EdgeInsets.all(8.0),
                                 child: TextFormField(
                                   controller: _passwordController,
                                   validator: (value) {
@@ -192,7 +204,12 @@ class CreateAccountScreenState extends State<CreateAccountScreen> {
                                   obscureText: _passwordVisible,
                                   decoration: InputDecoration(
                                     errorText: authProvider.fieldErrors['password'],
-                                    border: InputBorder.none,
+                                    border: const OutlineInputBorder(
+                                        borderSide: BorderSide.none,
+                                        borderRadius: BorderRadius.all(Radius.circular(14))
+                                    ),
+                                    filled: true,
+                                    fillColor: textWhiteGrey,
                                     hintText: "Password",
                                     hintStyle: TextStyle(color: Colors.grey[900]),
                                     suffixIcon: IconButton(
@@ -219,7 +236,12 @@ class CreateAccountScreenState extends State<CreateAccountScreen> {
                                   obscureText: _passwordVisible,
                                   decoration: InputDecoration(
                                     errorText: authProvider.fieldErrors['password'],
-                                    border: InputBorder.none,
+                                    border: const OutlineInputBorder(
+                                        borderSide: BorderSide.none,
+                                        borderRadius: BorderRadius.all(Radius.circular(14))
+                                    ),
+                                    filled: true,
+                                    fillColor: textWhiteGrey,
                                     hintText: "Retype Password",
                                     hintStyle: TextStyle(color: Colors.grey[900]),
                                     suffixIcon: IconButton(
@@ -230,15 +252,16 @@ class CreateAccountScreenState extends State<CreateAccountScreen> {
                                     ),
                                   ),
                                 ),
-                              )
+                              ),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              Button(width: 100, text: "Create account", onClick: () => {_validateAndSubmit()}),
                             ],
                           ),
                         ),
                       ),
-                      SizedBox(
-                        height: 30,
-                      ),
-                      Button(width: 100, text: "Create account", onClick: () => {_validateAndSubmit()}),
+
                       // Container(
                       //   height: 45,
                       //   decoration: BoxDecoration(

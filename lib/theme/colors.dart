@@ -17,11 +17,11 @@ const Color secondaryBackground = Color(0xffF4F3FF);
 
 const Color lightPrimaryBg = Color(0xffeaeff8);
 
-Color textBlack = const Color(0xff222222);
-Color textGrey = const Color(0xff94959b);
-Color textWhiteGrey = const Color(0xfff1f1f5);
+const Color textBlack = Color(0xff222222);
+const Color textGrey = Color(0xff94959b);
+const Color textWhiteGrey = Color(0xfff1f1f5);
 
-Color errorSecondary = const Color(0xfffdf4f4);
+const Color errorSecondary = Color(0xfffdf4f4);
 const Color errorPrimary = Color(0xffd30000);
 
 const Color warningPrimary = Color(0xfff19101);

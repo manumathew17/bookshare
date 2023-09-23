@@ -31,25 +31,25 @@ class SuccessScreenState extends State<SuccessScreen> {
 
             Text(
               "Payment successful",
-              style: header20.copyWith(color: Colors.green),
+              style: header20.copyWith(color: Colors.green, fontWeight: FontWeight.w900),
             ),
             RichText(
                 textAlign: TextAlign.center,
                 text: TextSpan(children: [
                   TextSpan(
                       style: const TextStyle(
-                          color: const Color(0xff7f7f7f),
-                          fontWeight: FontWeight.w400,
+                          color: const Color(0xff000000),
+                          fontWeight: FontWeight.w600,
                           fontStyle: FontStyle.normal,
                           fontSize: 14),
                       text: "We have received your payment of "),
                   TextSpan(
                       style:
-                          const TextStyle(color: const Color(0xff2d2d2d), fontWeight: FontWeight.w700, fontStyle: FontStyle.normal, fontSize: 14),
+                          const TextStyle(color: const Color(0xff000000), fontWeight: FontWeight.w800, fontStyle: FontStyle.normal, fontSize: 14),
                       text: "₹ 45. \n"),
                   TextSpan(
                       style:
-                          const TextStyle(color: const Color(0xff7f7f7f), fontWeight: FontWeight.w400, fontStyle: FontStyle.normal, fontSize: 14),
+                          const TextStyle(color: const Color(0xff000000), fontWeight: FontWeight.w600, fontStyle: FontStyle.normal, fontSize: 14),
                       text: "Please visit \nFlat 303, Tower B, Diamond District, Domlur, Bangalore, Karnataka")
                 ])),
             SizedBox(

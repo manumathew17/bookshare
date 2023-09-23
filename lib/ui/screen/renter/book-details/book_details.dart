@@ -6,6 +6,7 @@ import 'package:sizer/sizer.dart';
 
 import '../../../../theme/app_style.dart';
 import '../../../../theme/colors.dart';
+import 'book_lenders.dart';
 import 'bottom-sheet.dart';
 
 class BookDetailsScreen extends StatefulWidget {
@@ -55,12 +56,13 @@ class BookDetailsState extends State<BookDetailsScreen> {
                     ),
                   ),
                 ),
-                SizedBox(height: 5.h,),
+                SizedBox(
+                  height: 5.h,
+                ),
                 Text("Follow Me To Ground", style: header20, textAlign: TextAlign.center),
                 Text("by Sue Rainsford",
                     style: const TextStyle(color: const Color(0xff000000), fontWeight: FontWeight.w400, fontStyle: FontStyle.normal, fontSize: 16.0),
                     textAlign: TextAlign.center),
-
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -127,7 +129,20 @@ class BookDetailsState extends State<BookDetailsScreen> {
                           showModalBottomSheet(
                             context: context,
                             builder: (BuildContext context) {
-                              return const MyBottomSheet();
+                              return MyBottomSheet(
+                                onUpdate: () => {
+                                  showModalBottomSheet(
+                                      context: context,
+                                      isScrollControlled: true,
+                                      useSafeArea: true,
+                                      builder: (BuildContext context) {
+                                        return Padding(
+                                          padding: MediaQuery.of(context).viewInsets,
+                                          child: const BookLenders(),
+                                        );
+                                      })
+                                },
+                              );
                             },
                           )
                         })

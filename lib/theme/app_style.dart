@@ -18,3 +18,11 @@ const generalBoxDecoration = BoxDecoration(
     borderRadius: BorderRadius.all(Radius.circular(8)),
     boxShadow: [BoxShadow(color: Color(0x1f000000), offset: Offset(0, 2), blurRadius: 8, spreadRadius: 0)],
     color: Color(0xffffffff));
+
+const inputDecoration = InputDecoration(
+  label: Text(''),
+  hintStyle: TextStyle(color: textGrey, fontWeight: FontWeight.w700, fontStyle: FontStyle.normal, fontSize: 12.0),
+  border: OutlineInputBorder(borderSide: BorderSide.none, borderRadius: BorderRadius.all(Radius.circular(14))),
+  filled: true,
+  fillColor: textWhiteGrey,
+);

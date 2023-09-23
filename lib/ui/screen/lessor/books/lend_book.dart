@@ -1,4 +1,3 @@
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -6,7 +5,6 @@ import '../../../../theme/app_style.dart';
 import '../../../../theme/colors.dart';
 import 'lend_add_book.dart';
 import 'lend_my_book_screen.dart';
-
 
 class LendMyBooks extends StatefulWidget {
   const LendMyBooks({super.key});
@@ -28,6 +26,10 @@ class LendMyBooksState extends State<LendMyBooks> with TickerProviderStateMixin 
   void dispose() {
     _tabController.dispose();
     super.dispose();
+  }
+
+  void switchToSecondTab() {
+    _tabController.animateTo(1); // Switch to the second tab (index 1)
   }
 
   @override
@@ -59,10 +61,9 @@ class LendMyBooksState extends State<LendMyBooks> with TickerProviderStateMixin 
       ),
       body: TabBarView(
         controller: _tabController,
-        children: const <Widget>[
-          LendMyBookScreen(),
-          LendAddBookScreen()
-
+        children: <Widget>[
+          LendMyBookScreen(onTabSwitch: () => {_tabController.animateTo(1)}),
+          const LendAddBookScreen()
         ],
       ),
     );

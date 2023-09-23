@@ -1,4 +1,5 @@
 
+import 'package:bookshare/ui/screen/auth/location_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
 
@@ -13,9 +14,8 @@ import '../ui/screen/my-book/my_book.dart';
 import '../ui/screen/renter/arrival/new_arrival_screen.dart';
 import '../ui/screen/profile/profile_screen.dart';
 import '../ui/screen/renter/book-details/book_details.dart';
+import '../ui/screen/renter/search/search_screen.dart';
 import '../ui/screen/splash_screen.dart';
-
-
 
 final navigatorKey = GlobalKey<NavigatorState>();
 
@@ -55,5 +55,7 @@ final route = GoRouter(navigatorKey: navigatorKey, routes: [
   GoRoute(path: '/profile', builder: (context, state) => const ProfileScreen()),
   GoRoute(path: '/lend-home', builder: (context, state) => const LendBookHomeScreen()),
   GoRoute(path: '/lend-book', builder: (context, state) => const LendMyBooks()),
-  GoRoute(path: '/rent', builder: (context, state) => const RentHomeScreen())
+  GoRoute(path: '/rent', builder: (context, state) => const RentHomeScreen()),
+  GoRoute(path: '/add-address', builder: (context, state) => const LocationScreen()),
+  GoRoute(path: '/search', builder: (context, state) => const SearchScreen())
 ]);
