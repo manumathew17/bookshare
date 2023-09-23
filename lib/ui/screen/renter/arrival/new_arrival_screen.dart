@@ -10,6 +10,7 @@ import 'package:sizer/sizer.dart';
 
 import '../../../../theme/app_style.dart';
 import '../../../../theme/colors.dart';
+import '../../../../utils/Logger.dart';
 
 
 class NewArrivalScreen extends StatefulWidget {
@@ -66,44 +67,14 @@ class NewArrivalState extends State<NewArrivalScreen> {
         children: [
           Padding(
             padding: const EdgeInsets.only(left: 15, right: 15, bottom: 15, top: 15),
-            child: Container(
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: textWhiteGrey,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  const SizedBox(
-                    width: 15,
-                  ),
-                  Expanded(
-                    child: TextField(
-                      // controller: _searchController,
-                      // onChanged: (value) {
-                      //   Provider.of<CatalogProvider>(context,
-                      //       listen: false)
-                      //       .search(value);
-                      // },
-                      decoration: const InputDecoration(
-                        border: InputBorder.none,
-                        hintText: 'Search ',
-                        hintStyle: TextStyle(fontSize: 13, color: Colors.black, fontWeight: FontWeight.w700),
-                      ),
-                    ),
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.only(top: 3),
-                    child: Icon(
-                      Icons.search,
-                      color: Colors.black,
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            child: TextFormField(
+                keyboardType: TextInputType.name,
+                decoration: inputDecoration.copyWith(
+                    label: const Text('Search...'),
+                    suffixIcon: GestureDetector(
+                      child: const Icon(Icons.search_rounded),
+                      onTap: () => {Logger.log("clicked")},
+                    ))),
           ),
           Expanded(
               child: ListView.builder(

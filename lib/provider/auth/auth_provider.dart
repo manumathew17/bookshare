@@ -12,6 +12,7 @@ import '../../config/const.dart';
 class AuthProvider extends ChangeNotifier {
   bool authExpired = false;
   RequestRouter requestRouter = RequestRouter();
+  UserDetail userDetail = AccountConfig.userDetail;
 
   Map<String, String?> fieldErrors = {
     'name': null,
@@ -30,6 +31,8 @@ class AuthProvider extends ChangeNotifier {
           Map<String, dynamic> jsonMap = json.decode(response);
           AccountConfig.userDetail = UserDetail.fromJson(jsonMap);
           storeDetails(AccountConfig.userDetail);
+          userDetail = AccountConfig.userDetail;
+          notifyListeners();
           requestCallbacks.onSuccess(response);
         }, onError: (error) {
           Map<String, dynamic> responseMap = jsonDecode(error);
@@ -48,6 +51,19 @@ class AuthProvider extends ChangeNotifier {
         }));
   }
 
+  getUserProfile() {
+    requestRouter.getProfile(RequestCallbacks(
+        onSuccess: (response) {
+          Map<String, dynamic> jsonMap = response;
+          AccountConfig.userDetail = UserDetail.fromJson(jsonMap);
+          storeDetails(AccountConfig.userDetail);
+          userDetail = AccountConfig.userDetail;
+          AccountConfig.JWT_TOKEN = AccountConfig.userDetail.accessToken;
+          notifyListeners();
+        },
+        onError: (error) {}));
+  }
+
   Future<bool> isLoggedIn() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final userString = prefs.getString(SharedPrefKeys.login.name);
@@ -55,9 +71,12 @@ class AuthProvider extends ChangeNotifier {
       final Map<String, dynamic> jsonMap = json.decode(userString);
 
       AccountConfig.userDetail = UserDetail.fromJson(jsonMap);
+      userDetail = AccountConfig.userDetail;
+      notifyListeners();
       if (AccountConfig.userDetail.accessToken == "") {
         return false;
       } else {
+        AccountConfig.JWT_TOKEN = AccountConfig.userDetail.accessToken;
         return true;
       }
     } else {
@@ -71,5 +90,10 @@ class AuthProvider extends ChangeNotifier {
     final jsonString = jsonEncode(jsonMap);
     Logger.log(jsonString);
     return await prefs.setString(SharedPrefKeys.login.name, jsonString);
+  }
+
+  Future<bool> logOut() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return await prefs.clear();
   }
 }

@@ -5,8 +5,8 @@ import 'package:sizer/sizer.dart';
 
 import '../../../../theme/app_style.dart';
 import '../../../../theme/colors.dart';
-
-
+import '../../../../widget/components/home_addBook.dart';
+import '../../../../widget/components/shimmer_container.dart';
 
 class LendBookHomeScreen extends StatefulWidget {
   const LendBookHomeScreen({super.key});
@@ -239,74 +239,94 @@ class LendBookHomeScreenState extends State<LendBookHomeScreen> {
                 height: 2.h,
               ),
               Container(
-                height: 40.w, // Adjust the height as needed
-                child: ListView(
-                  scrollDirection: Axis.horizontal,
-                  shrinkWrap: true,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(right: 15.0),
-                      child: Container(
-                        width: 30.w,
-                        height: 35.w,
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(20),
-                          child: Image.network(
-                            'https://images1.penguinrandomhouse.com/cover/9780593500507',
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
-                    ),
-
-                    Padding(
-                      padding: const EdgeInsets.only(right: 15.0),
-                      child: Container(
-                        width: 30.w,
-                        height: 35.w,
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(20.0),
-                          child: Image.network(
-                            'https://images1.penguinrandomhouse.com/cover/9780593500507',
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
-                    ),
-
-                    Padding(
-                      padding: const EdgeInsets.only(right: 15.0),
-                      child: Container(
-                        width: 30.w,
-                        height: 35.w,
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(20.0),
-                          child: Image.network(
-                            'https://images1.penguinrandomhouse.com/cover/9780593500507',
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
-                    ),
-
-                    Padding(
-                      padding: const EdgeInsets.only(right: 15.0),
-                      child: Container(
-                        width: 30.w,
-                        height: 35.w,
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(20.0),
-                          child: Image.network(
-                            'https://images1.penguinrandomhouse.com/cover/9780593500507',
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
-                    ),
-                    // ... Add more items as needed
-                  ],
+                decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(9)), color: const Color(0xffe7e9f1)),
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 10, bottom: 10),
+                  child: AddBookHome(
+                    onClick: () => {GoRouter.of(context).push("/lend-book")},
+                  ),
                 ),
               ),
+
+              // Container(
+              //   height: 40.w, // Adjust the height as needed
+              //   child: ListView(
+              //     scrollDirection: Axis.horizontal,
+              //     shrinkWrap: true,
+              //     children: [
+              //       Padding(
+              //         padding: const EdgeInsets.only(right: 15.0),
+              //         child: Container(
+              //           width: 30.w,
+              //           height: 35.w,
+              //           child: ClipRRect(
+              //             borderRadius: BorderRadius.circular(20),
+              //             child: Image.network(
+              //               'http://books.google.com/books/content?id=bGZF0ev3DZoC&printsec=frontcover&img=1&zoom=5&edge=curl&source=gbs_ap',
+              //               fit: BoxFit.cover,
+              //             ),
+              //           ),
+              //         ),
+              //       ),
+              //
+              //       Padding(
+              //         padding: const EdgeInsets.only(right: 15.0),
+              //         child: Container(
+              //           width: 30.w,
+              //           height: 35.w,
+              //           child: ClipRRect(
+              //             borderRadius: BorderRadius.circular(20.0),
+              //             child: Image.network(
+              //               'http://books.google.com/books/content?id=bGZF0ev3DZoC&printsec=frontcover&img=1&zoom=5&edge=curl&source=gbs_ap',
+              //               fit: BoxFit.cover,
+              //             ),
+              //           ),
+              //         ),
+              //       ),
+              //
+              //       Padding(
+              //         padding: const EdgeInsets.only(right: 15.0),
+              //         child: Container(
+              //           width: 30.w,
+              //           height: 35.w,
+              //           child: ClipRRect(
+              //             borderRadius: BorderRadius.circular(20.0),
+              //             child: Image.network(
+              //               'http://books.google.com/books/content?id=lVXnmsCCd3wC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_ap',
+              //               fit: BoxFit.cover,
+              //             ),
+              //           ),
+              //         ),
+              //       ),
+              //
+              //       Padding(
+              //         padding: const EdgeInsets.only(right: 15.0),
+              //         child: Container(
+              //           width: 30.w,
+              //           height: 35.w,
+              //           child: ClipRRect(
+              //             borderRadius: BorderRadius.circular(20.0),
+              //             child: Image.network(
+              //               'http://books.google.com/books/content?id=bGZF0ev3DZoC&printsec=frontcover&img=1&zoom=5&edge=curl&source=gbs_ap',
+              //               fit: BoxFit.cover,
+              //               loadingBuilder: (BuildContext context, Widget child,
+              //                   ImageChunkEvent? loadingProgress) {
+              //                 if (loadingProgress == null) {
+              //                   return child;
+              //                 } else {
+              //                   return const Center(
+              //                     child: ShimmerContainer(width: 30, height: 35,),
+              //                   );
+              //                 }
+              //               },
+              //             ),
+              //           ),
+              //         ),
+              //       ),
+              //       // ... Add more items as needed
+              //     ],
+              //   ),
+              // ),
 
               SizedBox(
                 height: 5.h,
@@ -317,7 +337,7 @@ class LendBookHomeScreenState extends State<LendBookHomeScreen> {
                 children: [
                   Text("On rent",
                       style:
-                      const TextStyle(color: const Color(0xff000000), fontWeight: FontWeight.w700, fontStyle: FontStyle.normal, fontSize: 16.0),
+                          const TextStyle(color: const Color(0xff000000), fontWeight: FontWeight.w700, fontStyle: FontStyle.normal, fontSize: 16.0),
                       textAlign: TextAlign.center),
                   GestureDetector(
                     onTap: () {

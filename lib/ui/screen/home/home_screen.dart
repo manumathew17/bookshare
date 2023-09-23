@@ -8,6 +8,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 
 import 'dashboard_screen.dart';
@@ -77,6 +79,13 @@ class HomeScreenState extends State<HomeScreen> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    authProvider = Provider.of<AuthProvider>(context, listen: false);
+    authProvider.getUserProfile();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -95,10 +104,10 @@ class HomeScreenState extends State<HomeScreen> {
             child: GestureDetector(
               onTap: () => {GoRouter.of(context).push("/profile")},
               child: SizedBox(
-                width: 7.w,
-                height: 7.w,
+                width: 5.w,
+                height: 5.w,
                 child: ClipRRect(
-                  borderRadius: BorderRadius.circular(10.w / 2),
+                  borderRadius: BorderRadius.circular(5.w / 2),
                   child: Image.network(
                     "https://imgv3.fotor.com/images/gallery/Realistic-Female-Profile-Picture.jpg",
                     fit: BoxFit.cover,
@@ -443,28 +452,44 @@ class HomeScreenState extends State<HomeScreen> {
 
         items: [
           FlashyTabBarItem(
-            icon: const Icon(Icons.home_filled),
+            icon: SizedBox(
+              width: 24, // Adjust the width as needed
+              height: 24, // Adjust the height as needed
+              child: Image.asset('assets/icons/search.png'), // Replace with the actual asset path
+            ),
             title: const Text(
               'Home',
               style: TextStyle(color: primary),
             ),
           ),
           FlashyTabBarItem(
-            icon: const Icon(Icons.search),
+            icon: SizedBox(
+              width: 24, // Adjust the width as needed
+              height: 24, // Adjust the height as needed
+              child: Image.asset('assets/icons/search.png'), // Replace with the actual asset path
+            ),
             title: const Text(
               'Search',
               style: TextStyle(color: primary),
             ),
           ),
           FlashyTabBarItem(
-            icon: const Icon(Icons.add_shopping_cart_outlined),
+            icon: SizedBox(
+              width: 24, // Adjust the width as needed
+              height: 24, // Adjust the height as needed
+              child: Image.asset('assets/icons/mybook.png'), // Replace with the actual asset path
+            ),
             title: const Text(
               'Reading',
               style: TextStyle(color: primary),
             ),
           ),
           FlashyTabBarItem(
-            icon: const Icon(Icons.people),
+            icon: SizedBox(
+              width: 24, // Adjust the width as needed
+              height: 24, // Adjust the height as needed
+              child: Image.asset('assets/icons/lent.png'), // Replace with the actual asset path
+            ),
             title: const Text(
               'Catalog',
               style: TextStyle(color: primary),
@@ -475,8 +500,10 @@ class HomeScreenState extends State<HomeScreen> {
           //   title: Text('Chat'),
           // ),
           FlashyTabBarItem(
-            icon: const Icon(
-              Icons.monetization_on,
+            icon: SizedBox(
+              width: 24, // Adjust the width as needed
+              height: 24, // Adjust the height as needed
+              child: Image.asset('assets/icons/refer.png'), // Replace with the actual asset path
             ),
             title: const Text(
               'Profile',
@@ -486,6 +513,9 @@ class HomeScreenState extends State<HomeScreen> {
         ],
         onItemSelected: (index) {
           switch (index) {
+            case 1:
+              GoRouter.of(context).push("/search");
+              break;
             case 2:
               GoRouter.of(context).push("/my-read");
               break;

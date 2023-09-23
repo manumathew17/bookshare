@@ -19,6 +19,7 @@ class NetworkRequest {
 
   Future<void> getCall(String route, Map<String, dynamic>? queryParams, RequestCallbacks requestCallbacks) async {
     Logger.log(Uri.parse(API_ENDPOINT + route).replace(queryParameters: queryParams));
+    Logger.log(AccountConfig.JWT_TOKEN);
     try {
       final response = await http.get(Uri.parse(API_ENDPOINT + route).replace(queryParameters: queryParams), headers: getHeaders());
 
@@ -27,12 +28,14 @@ class NetworkRequest {
         //Logger.log(responseData);
         requestCallbacks.onSuccess(responseData.toString());
       } else {
-       // _showError(response.body);
+        Logger.log(response.body);
+        // _showError(response.body);
         requestCallbacks.onError(response.body);
       }
       Loader.hide();
     } catch (e) {
       _showInternetError();
+      Logger.log(e.toString());
       requestCallbacks.onError(e.toString());
       Loader.hide();
     }
@@ -40,6 +43,7 @@ class NetworkRequest {
 
   Future<void> postCall(String route, dynamic requestBody, RequestCallbacks requestCallbacks) async {
     Logger.log("url $API_ENDPOINT$route\n $requestBody");
+    Logger.log(AccountConfig.JWT_TOKEN);
     try {
       final response = await http.post(
         Uri.parse(API_ENDPOINT + route),
@@ -54,12 +58,12 @@ class NetworkRequest {
         requestCallbacks.onSuccess(responseData);
       } else {
         Loader.hide();
-        print(response.body);
-       // _showError(response.body);
+        Logger.log(response.body);
+        // _showError(response.body);
         requestCallbacks.onError(response.body);
       }
     } catch (e) {
-      print(e.toString());
+      Logger.log(e.toString());
       Loader.hide();
       _showInternetError();
       requestCallbacks.onError(e.toString());
@@ -82,7 +86,7 @@ class NetworkRequest {
         Logger.log(responseData);
         requestCallbacks.onSuccess(responseData);
       } else {
-       // _showError(response.body);
+        // _showError(response.body);
         requestCallbacks.onError(response.body);
       }
     } catch (e) {
@@ -97,21 +101,42 @@ class NetworkRequest {
     try {
       final response =
           await http.post(Uri.parse(API_ENDPOINT + route), body: json.encode(requestBody), headers: {'Content-Type': 'application/json'});
-      print(response.statusCode);
+      Logger.log(response.statusCode);
       if (successStatusCodes.contains(response.statusCode)) {
         final responseData = response.body;
-        print(responseData);
+        Logger.log(responseData);
         requestCallbacks.onSuccess(responseData);
       } else {
-        print(response.body);
+        Logger.log(response.body);
         //_showError(response.body);
-        requestCallbacks.onError(jsonDecode(response.body));
+        requestCallbacks.onError(response.body);
       }
       Loader.hide();
     } catch (e) {
-      print(e.toString());
+      Logger.log(e.toString());
       _showInternetError();
       Loader.hide();
+    }
+  }
+
+  uploadImage(filePath, RequestCallbacks requestCallbacks) async {
+    try {
+      var request = http.MultipartRequest('POST', Uri.parse('${API_ENDPOINT}upload-profile'));
+      request.files.add(await http.MultipartFile.fromPath('file', filePath));
+      request.headers.addAll(getHeaders());
+      http.StreamedResponse response = await request.send();
+
+      if (response.statusCode == 200) {
+        Logger.log(await response.stream.bytesToString());
+        requestCallbacks.onSuccess("Uploaded");
+      } else {
+        requestCallbacks.onError("Error occurred while uploading");
+        Logger.log(response.statusCode);
+        Logger.log(response.reasonPhrase);
+      }
+    } catch (e) {
+      Logger.log(e.toString());
+      requestCallbacks.onError("Failed to upload");
     }
   }
 

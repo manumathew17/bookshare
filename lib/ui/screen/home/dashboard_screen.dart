@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../../theme/colors.dart';
+import '../../../widget/components/shimmer_container.dart';
 import 'home_screen.dart';
 
 class DashBoardScreen extends StatefulWidget {
@@ -13,6 +15,7 @@ class DashBoardScreen extends StatefulWidget {
 }
 
 class DashBoardScreenState extends State<DashBoardScreen> {
+  DateTime now = DateTime.now();
 
 
   final List<GridItem> gridItems = [
@@ -42,7 +45,7 @@ class DashBoardScreenState extends State<DashBoardScreen> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text("25",
+                  Text(DateFormat('dd').format(now),
                       style:
                           const TextStyle(color: const Color(0xff000000), fontWeight: FontWeight.w700, fontStyle: FontStyle.normal, fontSize: 36.0),
                       textAlign: TextAlign.center),
@@ -53,11 +56,11 @@ class DashBoardScreenState extends State<DashBoardScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Text("Tuesday",
+                      Text( DateFormat('EEEE').format(now),
                           style: const TextStyle(
                               color: const Color(0xff909193), fontWeight: FontWeight.w400, fontStyle: FontStyle.normal, fontSize: 14.0),
                           textAlign: TextAlign.center),
-                      Text("July 2023",
+                      Text("${DateFormat('MMM').format(now)} ${DateFormat('y').format(now)}",
                           style: const TextStyle(
                               color: const Color(0xff909193), fontWeight: FontWeight.w400, fontStyle: FontStyle.normal, fontSize: 14.0),
                           textAlign: TextAlign.center)
@@ -104,8 +107,18 @@ class DashBoardScreenState extends State<DashBoardScreen> {
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(20),
                           child: Image.network(
-                            'https://images1.penguinrandomhouse.com/cover/9780593500507',
+                            'https://images1..com/cover/9780593500507',
                             fit: BoxFit.cover,
+                            loadingBuilder: (BuildContext context, Widget child,
+                                ImageChunkEvent? loadingProgress) {
+                              if (loadingProgress == null) {
+                                return child;
+                              } else {
+                                return const Center(
+                                  child: ShimmerContainer(width: 30, height: 35,),
+                                );
+                              }
+                            },
                           ),
                         ),
                       ),
@@ -259,14 +272,14 @@ class DashBoardScreenState extends State<DashBoardScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Container(
+            SizedBox(
               width: 24, // Adjust the width as needed
               height: 24, // Adjust the height as needed
               child: Image.asset('assets/icons/${item.icon}.png'), // Replace with the actual asset path
             ),
             SizedBox(height: 2.h), // Add spacing between icon and text
             Text(item.text,
-                style: const TextStyle(color: const Color(0xff909193), fontWeight: FontWeight.w400, fontStyle: FontStyle.normal, fontSize: 10.0),
+                style: const TextStyle(color: const Color(0xff131313), fontWeight: FontWeight.w600, fontStyle: FontStyle.normal, fontSize: 12.0),
                 textAlign: TextAlign.center)
           ],
         ),

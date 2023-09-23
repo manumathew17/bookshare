@@ -5,9 +5,8 @@ import 'custom_snackbar.dart';
 
 class GeneralSnackBar {
   final BuildContext _context;
-
   GeneralSnackBar(this._context);
-
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   void showErrorSnackBar(String message) {
     final snackBar = CustomSnackBar(
         message: message, iconData: Icons.error, color: errorPrimary);

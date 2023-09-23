@@ -32,4 +32,27 @@ class RequestRouter {
   url(String url) {
     return _networkRequest.url(url);
   }
+  getProfile(RequestCallbacks requestCallbacks) {
+    _networkRequest.getCall("user-profile", null, requestCallbacks);
+  }
+
+  getMyBooks(RequestCallbacks requestCallbacks) {
+    _networkRequest.getCall("my-books", null, requestCallbacks);
+  }
+
+  getBooks(Map<String, dynamic>? queryParams,RequestCallbacks requestCallbacks) {
+    _networkRequest.getCall("books", null, requestCallbacks);
+  }
+
+  addBookForRent(dynamic requestBody, RequestCallbacks requestCallbacks) {
+    _networkRequest.postCall('book-for-rent', requestBody, requestCallbacks);
+  }
+  
+  updateProfile(dynamic requestBody, RequestCallbacks requestCallbacks){
+    _networkRequest.postCall('update-profile', requestBody, requestCallbacks);
+  }
+
+  uploadImage(String filePath, RequestCallbacks requestCallbacks) {
+    _networkRequest.uploadImage(filePath, requestCallbacks);
+  }
 }

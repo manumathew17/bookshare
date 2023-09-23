@@ -1,11 +1,23 @@
+import 'dart:io';
+
 import 'package:bookshare/config/account.dart';
+import 'package:bookshare/network/callback.dart';
+import 'package:bookshare/network/request_route.dart';
+import 'package:bookshare/provider/auth/auth_provider.dart';
 import 'package:bookshare/theme/colors.dart';
+import 'package:bookshare/utils/Logger.dart';
+import 'package:bookshare/widget/components/snackbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../../theme/app_style.dart';
+import '../../../widget/components/prifile_image.dart';
 import '../../../widget/components/profile_list_items.dart';
+import 'edit_profile.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -15,77 +27,143 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class ProfilePageState extends State<ProfileScreen> {
+  RequestRouter requestRouter = RequestRouter();
+  late GeneralSnackBar _generalSnackBar;
+
+  @override
+  void initState() {
+    _generalSnackBar = GeneralSnackBar(context);
+    requestRouter.getProfile(RequestCallbacks(onSuccess: (data) {}, onError: (error) {}));
+    super.initState();
+  }
+
+  Future<void> _pickImage() async {
+    final imagePicker = ImagePicker();
+    final pickedImage = await imagePicker.pickImage(source: ImageSource.gallery);
+
+    if (pickedImage != null) {
+      print(pickedImage.path);
+      final imageFile = File(pickedImage.path);
+      final fileSize = await imageFile.length();
+
+      if (fileSize <= 1024 * 1024) {
+        requestRouter.uploadImage(
+            pickedImage.path,
+            RequestCallbacks(
+                onSuccess: (response) {},
+                onError: (error) {
+                  _generalSnackBar.showErrorSnackBar("Failed to update the image");
+                }));
+      } else {
+        _generalSnackBar.showErrorSnackBar("Please select the image which sizes is smaller than 1 MB");
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: Stack(
-        children: <Widget>[
-          Padding(
-            padding: EdgeInsets.all(25),
-            child: Column(
-              children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.only(top: 20),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.cancel_outlined, size: 24),
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  width: 15.w,
-                  height: 15.w,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(15.w / 2),
-                    child: Image.network(
-                      "https://imgv3.fotor.com/images/gallery/Realistic-Female-Profile-Picture.jpg",
-                      fit: BoxFit.cover,
-                      width: double.infinity,
-                      height: double.infinity,
-                      loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
-                        if (loadingProgress == null) {
-                          return child;
-                        } else {
-                          return const Center(
-                            child: CircularProgressIndicator(
-                              strokeWidth: 1,
-                            ),
-                          );
-                        }
-                      },
+    editUser() {
+      showModalBottomSheet(
+          context: context,
+          isScrollControlled: true,
+          useSafeArea: true,
+          builder: (BuildContext context) {
+            return Padding(
+              padding: MediaQuery.of(context).viewInsets,
+              child: EditProfile(
+                userDetail: Provider.of<AuthProvider>(context, listen: false).userDetail,
+                onUpdate: () => {_generalSnackBar.showSuccessSnackBar("Successfully updated the profile")},
+              ),
+            );
+          });
+    }
+
+    return Consumer<AuthProvider>(builder: (context, authProvider, child) {
+      return Scaffold(
+        backgroundColor: Colors.white,
+        body: Stack(
+          children: <Widget>[
+            Padding(
+              padding: EdgeInsets.all(25),
+              child: Column(
+                children: <Widget>[
+                  Padding(
+                    padding: EdgeInsets.only(top: 20),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.cancel_outlined, size: 24),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                        TextButton(
+                          style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all<Color>(Colors.grey[200]!),
+                          ),
+                          onPressed: () {
+                            editUser();
+                          },
+                          child: Text('Edit'),
+                        ),
+                      ],
                     ),
                   ),
-                ),
+                  EditableImage(
+                    imageUrl: "https://imgv3.fcom/images/gallery/Realistic-Female-Profile-Picture.jpg",
+                    onImageClicked: () => {_pickImage()},
+                  ),
+                  // SizedBox(
+                  //   width: 15.w,
+                  //   height: 15.w,
+                  //   child: ClipRRect(
+                  //     borderRadius: BorderRadius.circular(15.w / 2),
+                  //     child: Image.network(
+                  //       "https://imgv3.fotor.com/images/gallery/Realistic-Female-Profile-Picture.jpg",
+                  //       fit: BoxFit.cover,
+                  //       width: double.infinity,
+                  //       height: double.infinity,
+                  //       loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                  //         if (loadingProgress == null) {
+                  //           return child;
+                  //         } else {
+                  //           return const Center(
+                  //             child: CircularProgressIndicator(
+                  //               strokeWidth: 1,
+                  //             ),
+                  //           );
+                  //         }
+                  //       },
+                  //     ),
+                  //   ),
+                  // ),
 
-                // SocialIcons(),
-                SizedBox(height: 10),
-                Text(
-                  AccountConfig.userDetail.user.name,
-                  style: header.copyWith(color: Colors.black),
-                ),
-                Text(
-                  AccountConfig.userDetail.user.email,
-                  style: TextStyle(fontWeight: FontWeight.w300),
-                ),
-                SizedBox(height: 5.h),
-                ProfileListItem(
-                  icon: Icons.location_on_rounded,
-                  text: '#132 HSR layout opposite hustle hub  \nBenglore\nKarnataka',
-                ),
-                ProfileListItems(),
-              ],
-            ),
-          )
-        ],
-      ),
-    );
+                  // SocialIcons(),
+                  SizedBox(height: 10),
+                  Text(
+                    authProvider.userDetail.user.name,
+                    style: header.copyWith(color: Colors.black),
+                  ),
+                  Text(
+                    authProvider.userDetail.user.email,
+                    style: TextStyle(fontWeight: FontWeight.w300),
+                  ),
+                  SizedBox(height: 5.h),
+                  ProfileListItem(
+                    icon: Icons.location_on_rounded,
+                    text: authProvider.userDetail.user.address,
+                    tailIcon: Icons.edit,
+                    onClick: () => {editUser()},
+                  ),
+                  ProfileListItems(),
+                ],
+              ),
+            )
+          ],
+        ),
+      );
+    });
   }
 }
 
@@ -212,11 +290,13 @@ class ProfileListItems extends StatelessWidget {
           ProfileListItem(
             icon: Icons.history,
             text: 'Purchase History',
+            onClick: () => {},
           ),
 
           ProfileListItem(
             icon: Icons.help_rounded,
             text: 'Help & Support',
+            onClick: () => {},
           ),
           // ProfileListItem(
           //   icon: Icons.settings,
@@ -225,15 +305,20 @@ class ProfileListItems extends StatelessWidget {
           ProfileListItem(
             icon: Icons.message,
             text: 'Invite a Friend',
+            onClick: () => {},
           ),
           ProfileListItem(
             icon: Icons.privacy_tip_rounded,
             text: 'Privacy',
+            onClick: () => {},
           ),
           ProfileListItem(
             icon: Icons.logout_rounded,
             text: 'Logout',
-            hasNavigation: false,
+            onClick: () {
+              Provider.of<AuthProvider>(context, listen: false).logOut();
+              context.go('/login');
+            },
           ),
         ],
       ),

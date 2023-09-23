@@ -1,4 +1,3 @@
-
 import 'package:bookshare/theme/colors.dart';
 import 'package:bookshare/widget/essentials/button.dart';
 import 'package:flutter/material.dart';
@@ -9,16 +8,17 @@ import '../../../../theme/app_style.dart';
 
 import '../../success/success-screen.dart';
 
-
-
 class MyBottomSheet extends StatefulWidget {
-  const MyBottomSheet({super.key});
+  final VoidCallback onUpdate;
+
+  const MyBottomSheet({super.key, required this.onUpdate});
 
   @override
   _MyBottomSheetState createState() => _MyBottomSheetState();
 }
 
 class _MyBottomSheetState extends State<MyBottomSheet> {
+  final _formKey = GlobalKey<FormState>();
   final TextEditingController _dateController = TextEditingController();
   late DateTime _selectedDate;
 
@@ -55,7 +55,7 @@ class _MyBottomSheetState extends State<MyBottomSheet> {
           ),
           const Text("Select Return Date", style: header12, textAlign: TextAlign.center),
           const SizedBox(height: 20.0),
-          Padding(
+          Form( key: _formKey, child:Padding(
               padding: const EdgeInsets.all(20),
               child: Container(
                 decoration: BoxDecoration(
@@ -71,22 +71,34 @@ class _MyBottomSheetState extends State<MyBottomSheet> {
                   decoration: const InputDecoration(
                     contentPadding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0), // Adjust padding
                     labelText: 'Select Date',
-                    suffixIcon: Icon(Icons.calendar_month_rounded, color: yellowPrimary,),
+                    suffixIcon: Icon(
+                      Icons.calendar_month_rounded,
+                      color: yellowPrimary,
+                    ),
                     border: InputBorder.none, // Remove input border
                   ),
+
+                  validator: (value) {
+                    if (value?.isEmpty ?? true) {
+                      return 'Please select return data';
+                    } else {
+                      return null;
+                    }
+                  },
                 ),
-              )),
+              )), ),
+
           Padding(
             padding: const EdgeInsets.all(20.0),
             child: Button(
               width: 100.w,
               text: "Proceed",
-              onClick: () => {
-                Navigator.of(context).pop(),
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const SuccessScreen()),
-                )
+              onClick: () {
+                if(_formKey.currentState!.validate()){
+                  Navigator.of(context).pop();
+                  widget.onUpdate();
+                }
+
               },
               backgroundColor: yellowPrimary,
             ),
@@ -101,7 +113,7 @@ class _MyBottomSheetState extends State<MyBottomSheet> {
     DateTime? pickedDate = await showDatePicker(
         context: context,
         initialDate: DateTime.now(),
-        firstDate: DateTime(2000), //DateTime.now() - not to allow to choose before today.
+        firstDate: DateTime.now(), //DateTime.now() - not to allow to choose before today.
         lastDate: DateTime(2101));
 
     if (pickedDate != null) {
