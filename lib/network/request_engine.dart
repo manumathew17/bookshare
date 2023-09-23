@@ -24,7 +24,7 @@ class NetworkRequest {
 
       if (successStatusCodes.contains(response.statusCode)) {
         final responseData = response.body;
-        Logger.log(responseData);
+        //Logger.log(responseData);
         requestCallbacks.onSuccess(responseData.toString());
       } else {
        // _showError(response.body);
@@ -122,5 +122,8 @@ class NetworkRequest {
 
   _showInternetError() {
     _generalSnackBar.showErrorSnackBar("Something went wrong, internet not available");
+  }
+  url(String url) {
+    return WEB_ENDPOINT+url;
   }
 }

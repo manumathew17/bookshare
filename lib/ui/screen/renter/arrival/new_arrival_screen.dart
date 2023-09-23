@@ -1,3 +1,7 @@
+import 'dart:convert';
+
+import 'package:bookshare/network/callback.dart';
+import 'package:bookshare/network/request_route.dart';
 import 'package:bookshare/widget/essentials/button.dart';
 import 'package:bookshare/widget/tag/general_tag.dart';
 import 'package:flutter/material.dart';
@@ -16,6 +20,29 @@ class NewArrivalScreen extends StatefulWidget {
 }
 
 class NewArrivalState extends State<NewArrivalScreen> {
+   RequestRouter requestRouter = RequestRouter();
+   List newArrBook = [];
+   @override
+  void initState() {
+    super.initState();
+    loadNewArrivals();
+  }
+    void loadNewArrivals() {
+    requestRouter.get(
+        'books-for-rent',
+        {"per_page": '25'},
+        RequestCallbacks(
+            onSuccess: (response) {
+              Map<String, dynamic> jsonMap = json.decode(response);
+              setState(() {
+                setState(() {
+                  newArrBook = jsonMap['books']['data'];
+                });
+              });
+            },
+            onError: (error) {}));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -81,8 +108,10 @@ class NewArrivalState extends State<NewArrivalScreen> {
           Expanded(
               child: ListView.builder(
                   shrinkWrap: true,
-                  itemCount: 10,
+                  itemCount: newArrBook.length,
                   itemBuilder: (context, index) {
+                     Map<String, dynamic> images =
+                              json.decode(newArrBook[index]['images']);
                     return Padding(
                       padding: const EdgeInsets.only(top: 0, bottom: 20, left: 15, right: 15),
                       child: Container(
@@ -99,7 +128,7 @@ class NewArrivalState extends State<NewArrivalScreen> {
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(14.0),
                                   child: Image.network(
-                                    'https://images1.penguinrandomhouse.com/cover/9780593500507',
+                                     images['smallThumbnail'].toString(),
                                     fit: BoxFit.cover,
                                   ),
                                 ),
@@ -113,13 +142,13 @@ class NewArrivalState extends State<NewArrivalScreen> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: <Widget>[
                                     Text(
-                                      "Follow me to ground",
+                                      newArrBook[index]['title'],
                                       overflow: TextOverflow.ellipsis,
                                       maxLines: 1,
                                       style: heading1,
                                     ),
                                     Text(
-                                      "by sure Rainford",
+                                      "by ${newArrBook[index]['author']}",
                                       style: heading1Bold,
                                     ),
                                     SizedBox(
