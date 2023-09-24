@@ -122,17 +122,17 @@ class NewArrivalState extends State<NewArrivalScreen> {
                                       "by ${newArrBook[index]['author']}",
                                       style: heading1Bold,
                                     ),
-                                    SizedBox(
+                                    const SizedBox(
                                       height: 7,
                                     ),
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.start,
                                       children: [
-                                        Tag(text: "68"),
+                                        const Tag(text: "68"),
                                         SizedBox(
                                           width: 2.w,
                                         ),
-                                        Text("times rented", style: infoText, textAlign: TextAlign.center),
+                                        const Text("times rented", style: infoText, textAlign: TextAlign.center),
                                       ],
                                     ),
                                     SizedBox(
@@ -143,7 +143,7 @@ class NewArrivalState extends State<NewArrivalScreen> {
                                         width: 100,
                                         text: "Rent",
                                         backgroundColor: yellowPrimary,
-                                        onClick: () => {GoRouter.of(context).push("/book-details")})
+                                        onClick: () => {GoRouter.of(context).push("/book-details", extra: newArrBook[index])})
                                     // SizedBox(
                                     //   width: 100.w,
                                     //

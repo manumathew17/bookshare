@@ -1,7 +1,10 @@
+import 'dart:convert';
+
 import 'package:bookshare/widget/essentials/button.dart';
 import 'package:bookshare/widget/tag/general_tag.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../../../theme/app_style.dart';
@@ -11,7 +14,7 @@ import 'bottom-sheet.dart';
 
 class BookDetailsScreen extends StatefulWidget {
   const BookDetailsScreen({super.key});
-
+  
   @override
   BookDetailsState createState() => BookDetailsState();
 }
@@ -19,6 +22,8 @@ class BookDetailsScreen extends StatefulWidget {
 class BookDetailsState extends State<BookDetailsScreen> {
   @override
   Widget build(BuildContext context) {
+    dynamic book = GoRouterState.of(context).extra;
+    Map<String, dynamic> images = json.decode(book['images']);
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -51,7 +56,7 @@ class BookDetailsState extends State<BookDetailsScreen> {
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(16.0),
                     child: Image.network(
-                      'https://images1.penguinrandomhouse.com/cover/9780593500507',
+                      images['smallThumbnail'].toString(),
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -59,8 +64,8 @@ class BookDetailsState extends State<BookDetailsScreen> {
                 SizedBox(
                   height: 5.h,
                 ),
-                Text("Follow Me To Ground", style: header20, textAlign: TextAlign.center),
-                Text("by Sue Rainsford",
+                Text(book['title'], style: header20, textAlign: TextAlign.center),
+                Text(book['author'],
                     style: const TextStyle(color: const Color(0xff000000), fontWeight: FontWeight.w400, fontStyle: FontStyle.normal, fontSize: 16.0),
                     textAlign: TextAlign.center),
                 Row(
@@ -73,7 +78,7 @@ class BookDetailsState extends State<BookDetailsScreen> {
                     SizedBox(
                       width: 1.w,
                     ),
-                    Text("In Stock",
+                    Text("In Stock ( ${book['available']} )",
                         style:
                             const TextStyle(color: const Color(0xff909193), fontWeight: FontWeight.w400, fontStyle: FontStyle.normal, fontSize: 10.0),
                         textAlign: TextAlign.center),
@@ -84,7 +89,7 @@ class BookDetailsState extends State<BookDetailsScreen> {
                 Padding(
                   padding: const EdgeInsets.only(top: 10, bottom: 10),
                   child: Text(
-                      "A haunted, surreal debut novel about an otherworldly young woman, her father, and her lover that culminates in a shocking moment of betrayal - one that upends our understanding of power, predation, and agency.",
+                      book['description'],
                       style: const TextStyle(
                           color: const Color(0xff9d9ea8),
                           fontWeight: FontWeight.w400,
@@ -108,11 +113,11 @@ class BookDetailsState extends State<BookDetailsScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Tag(text: "68"),
+                    const Tag(text: "68"),
                     SizedBox(
                       width: 1.w,
                     ),
-                    Text("times rented",
+                    const Text("times rented",
                         style:
                             const TextStyle(color: const Color(0xff909193), fontWeight: FontWeight.w400, fontStyle: FontStyle.normal, fontSize: 14.6),
                         textAlign: TextAlign.center)
