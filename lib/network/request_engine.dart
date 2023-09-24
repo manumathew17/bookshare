@@ -14,10 +14,12 @@ class NetworkRequest {
   final List<int> successStatusCodes = [200, 201];
 
   static Map<String, String> getHeaders() {
-    return {'Authorization': 'Bearer ${AccountConfig.JWT_TOKEN}', 'Content-Type': 'application/json'};
+    
+    return {"Authorization": 'Bearer ${AccountConfig.JWT_TOKEN}', "Content-Type": 'application/json'};
   }
 
   Future<void> getCall(String route, Map<String, dynamic>? queryParams, RequestCallbacks requestCallbacks) async {
+    print(queryParams);
     Logger.log(Uri.parse(API_ENDPOINT + route).replace(queryParameters: queryParams));
     Logger.log(AccountConfig.JWT_TOKEN);
     try {

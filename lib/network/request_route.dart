@@ -41,7 +41,7 @@ class RequestRouter {
   }
 
   getBooks(Map<String, dynamic>? queryParams,RequestCallbacks requestCallbacks) {
-    _networkRequest.getCall("books", null, requestCallbacks);
+    _networkRequest.getCall("books", queryParams, requestCallbacks);
   }
 
   addBookForRent(dynamic requestBody, RequestCallbacks requestCallbacks) {

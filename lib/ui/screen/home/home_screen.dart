@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:bookshare/network/callback.dart';
 import 'package:bookshare/network/request_route.dart';
+import 'package:bookshare/provider/auth/auth_provider.dart';
 import 'package:bookshare/theme/colors.dart';
 import 'package:flashy_tab_bar2/flashy_tab_bar2.dart';
 import 'package:flutter/cupertino.dart';
@@ -27,6 +28,7 @@ class HomeScreenState extends State<HomeScreen> {
   List newArrBook = [];
   List categories = [];
   RequestRouter requestRouter = RequestRouter();
+  late AuthProvider authProvider;
   List<GridItem> gridItems = [];
   static const List<Widget> _homeScreensWidgets = [
     DashBoardScreen(),
@@ -42,6 +44,8 @@ class HomeScreenState extends State<HomeScreen> {
     super.initState();
     loadNewArrivals();
     loadCategories();
+    authProvider = Provider.of<AuthProvider>(context, listen: false);
+    authProvider.getUserProfile();
   }
 
   void loadNewArrivals() {
@@ -76,13 +80,6 @@ class HomeScreenState extends State<HomeScreen> {
               });
             },
             onError: (error) {}));
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    authProvider = Provider.of<AuthProvider>(context, listen: false);
-    authProvider.getUserProfile();
   }
 
   @override
