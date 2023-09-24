@@ -51,7 +51,7 @@ class LendAddBookScreenState extends State<LendAddBookScreen> {
   }
 
   _getBook() {
-    _bookProvider.getAllBook(RequestCallbacks(
+    _bookProvider.getAllBook('books',RequestCallbacks(
         onSuccess: (response) => {},
         onError: (onError) {
           _generalSnackBar.showErrorSnackBar(
@@ -180,7 +180,7 @@ class LendAddBookScreenState extends State<LendAddBookScreen> {
                                                                         .book[
                                                                     index],
                                                                 onUpdate: () =>
-                                                                    {},
+                                                                    {Navigator.pop(context)},
                                                               ),
                                                             );
                                                           })

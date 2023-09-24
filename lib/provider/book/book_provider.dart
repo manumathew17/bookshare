@@ -10,20 +10,18 @@ class BookProvider extends ChangeNotifier {
   List<Book> book = [];
   bool isLoading = true;
   int pageNumber = 1;
-  dynamic queryParams = {
-    "page": 1,
-    "per_page": 20,
-    "q": ""
-  };
+  dynamic queryParams = {"page": 1, "per_page": 20, "q": "", "mybook": false};
   RequestRouter requestRouter = RequestRouter();
 
-  getAllBook(RequestCallbacks requestCallbacks) {
+  getAllBook(String url, RequestCallbacks requestCallbacks) {
     isLoading = true;
     requestRouter.getBooks(
+        url,
         {
           "page": queryParams['page'].toString(),
           "per_page": queryParams['per_page'].toString(),
-          "q": queryParams['q']
+          "q": queryParams['q'],
+          "mybook": queryParams['mybook'].toString()
         },
         RequestCallbacks(onSuccess: (responce) {
           Map<String, dynamic> data = json.decode(responce);
@@ -39,6 +37,7 @@ class BookProvider extends ChangeNotifier {
 
   _createBookArrayList(data) {
     List<dynamic> list = data['books']['data'];
+    print(list);
     book.addAll(list.map((item) => Book.fromJson(item)).toList());
     notifyListeners();
   }
