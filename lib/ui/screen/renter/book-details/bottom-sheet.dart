@@ -9,7 +9,7 @@ import '../../../../theme/app_style.dart';
 import '../../success/success-screen.dart';
 
 class MyBottomSheet extends StatefulWidget {
-  final VoidCallback onUpdate;
+  final Function onUpdate;
 
   const MyBottomSheet({super.key, required this.onUpdate});
 
@@ -96,7 +96,8 @@ class _MyBottomSheetState extends State<MyBottomSheet> {
               onClick: () {
                 if(_formKey.currentState!.validate()){
                   Navigator.of(context).pop();
-                  widget.onUpdate();
+                  print(_dateController.text);
+                  widget.onUpdate(_dateController.text);
                 }
 
               },
@@ -117,11 +118,7 @@ class _MyBottomSheetState extends State<MyBottomSheet> {
         lastDate: DateTime(2101));
 
     if (pickedDate != null) {
-      print(pickedDate); //pickedDate output format => 2021-03-10 00:00:00.000
       String formattedDate = DateFormat('yyyy-MM-dd').format(pickedDate);
-      print(formattedDate); //formatted date output using intl package =>  2021-03-16
-      //you can implement different kind of Date Format here according to your requirement
-
       setState(() {
         _dateController.text = formattedDate; //set output date to TextField value.
       });

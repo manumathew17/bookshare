@@ -18,7 +18,7 @@ class RequestRouter {
   }
 
   post(String url, dynamic requestBody, RequestCallbacks requestCallbacks) {
-    _networkRequest.noAuthPost(url, requestBody, requestCallbacks);
+    _networkRequest.postCall(url, requestBody, requestCallbacks);
   }
 
   put(String url, dynamic requestBody, RequestCallbacks requestCallbacks) {

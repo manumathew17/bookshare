@@ -1,6 +1,13 @@
+import 'dart:convert';
+
+import 'package:bookshare/network/callback.dart';
+import 'package:bookshare/network/request_route.dart';
+import 'package:bookshare/provider/auth/auth_provider.dart';
+import 'package:bookshare/ui/screen/home/home_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../../../theme/app_style.dart';
@@ -16,6 +23,34 @@ class LendBookHomeScreen extends StatefulWidget {
 }
 
 class LendBookHomeScreenState extends State<LendBookHomeScreen> {
+  List newArrBook = [];
+  RequestRouter requestRouter = RequestRouter();
+  late AuthProvider authProvider;
+  List<GridItem> gridItems = [];
+
+  @override
+  void initState() {
+    super.initState();
+    loadNewArrivals();
+  }
+
+  void loadNewArrivals() {
+    requestRouter.get(
+        'books-for-rent',
+        {"per_page": '6'},
+        RequestCallbacks(
+            onSuccess: (response) {
+              Map<String, dynamic> jsonMap = json.decode(response);
+              print(jsonMap['books']);
+              setState(() {
+                setState(() {
+                  newArrBook = jsonMap['books']['data'];
+                });
+              });
+            },
+            onError: (error) {}));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -222,15 +257,22 @@ class LendBookHomeScreenState extends State<LendBookHomeScreen> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text("My Books",
-                      style:
-                          const TextStyle(color: const Color(0xff000000), fontWeight: FontWeight.w700, fontStyle: FontStyle.normal, fontSize: 16.0),
+                      style: const TextStyle(
+                          color: const Color(0xff000000),
+                          fontWeight: FontWeight.w700,
+                          fontStyle: FontStyle.normal,
+                          fontSize: 16.0),
                       textAlign: TextAlign.center),
                   GestureDetector(
                     onTap: () {
                       GoRouter.of(context).push("/lend-book");
                     },
                     child: Text("View More >",
-                        style: const TextStyle(color: lentThemePrimary, fontWeight: FontWeight.w700, fontStyle: FontStyle.normal, fontSize: 10.0),
+                        style: const TextStyle(
+                            color: lentThemePrimary,
+                            fontWeight: FontWeight.w700,
+                            fontStyle: FontStyle.normal,
+                            fontSize: 10.0),
                         textAlign: TextAlign.center),
                   )
                 ],
@@ -238,96 +280,44 @@ class LendBookHomeScreenState extends State<LendBookHomeScreen> {
               SizedBox(
                 height: 2.h,
               ),
-              Container(
-                decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(9)), color: const Color(0xffe7e9f1)),
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 10, bottom: 10),
-                  child: AddBookHome(
-                    onClick: () => {GoRouter.of(context).push("/lend-book")},
-                  ),
-                ),
-              ),
-
-              // Container(
-              //   height: 40.w, // Adjust the height as needed
-              //   child: ListView(
-              //     scrollDirection: Axis.horizontal,
-              //     shrinkWrap: true,
-              //     children: [
-              //       Padding(
-              //         padding: const EdgeInsets.only(right: 15.0),
-              //         child: Container(
-              //           width: 30.w,
-              //           height: 35.w,
-              //           child: ClipRRect(
-              //             borderRadius: BorderRadius.circular(20),
-              //             child: Image.network(
-              //               'http://books.google.com/books/content?id=bGZF0ev3DZoC&printsec=frontcover&img=1&zoom=5&edge=curl&source=gbs_ap',
-              //               fit: BoxFit.cover,
-              //             ),
-              //           ),
-              //         ),
-              //       ),
-              //
-              //       Padding(
-              //         padding: const EdgeInsets.only(right: 15.0),
-              //         child: Container(
-              //           width: 30.w,
-              //           height: 35.w,
-              //           child: ClipRRect(
-              //             borderRadius: BorderRadius.circular(20.0),
-              //             child: Image.network(
-              //               'http://books.google.com/books/content?id=bGZF0ev3DZoC&printsec=frontcover&img=1&zoom=5&edge=curl&source=gbs_ap',
-              //               fit: BoxFit.cover,
-              //             ),
-              //           ),
-              //         ),
-              //       ),
-              //
-              //       Padding(
-              //         padding: const EdgeInsets.only(right: 15.0),
-              //         child: Container(
-              //           width: 30.w,
-              //           height: 35.w,
-              //           child: ClipRRect(
-              //             borderRadius: BorderRadius.circular(20.0),
-              //             child: Image.network(
-              //               'http://books.google.com/books/content?id=lVXnmsCCd3wC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_ap',
-              //               fit: BoxFit.cover,
-              //             ),
-              //           ),
-              //         ),
-              //       ),
-              //
-              //       Padding(
-              //         padding: const EdgeInsets.only(right: 15.0),
-              //         child: Container(
-              //           width: 30.w,
-              //           height: 35.w,
-              //           child: ClipRRect(
-              //             borderRadius: BorderRadius.circular(20.0),
-              //             child: Image.network(
-              //               'http://books.google.com/books/content?id=bGZF0ev3DZoC&printsec=frontcover&img=1&zoom=5&edge=curl&source=gbs_ap',
-              //               fit: BoxFit.cover,
-              //               loadingBuilder: (BuildContext context, Widget child,
-              //                   ImageChunkEvent? loadingProgress) {
-              //                 if (loadingProgress == null) {
-              //                   return child;
-              //                 } else {
-              //                   return const Center(
-              //                     child: ShimmerContainer(width: 30, height: 35,),
-              //                   );
-              //                 }
-              //               },
-              //             ),
-              //           ),
-              //         ),
-              //       ),
-              //       // ... Add more items as needed
-              //     ],
-              //   ),
-              // ),
-
+              newArrBook.length == 0
+                  ? Container(
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(9)),
+                          color: const Color(0xffe7e9f1)),
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 10, bottom: 10),
+                        child: AddBookHome(
+                          onClick: () =>
+                              {GoRouter.of(context).push("/lend-book")},
+                        ),
+                      ),
+                    )
+                  : Container(
+                      height: 40.w, // Adjust the height as needed
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount:
+                            newArrBook.length, // Number of items in the list
+                        itemBuilder: (BuildContext context, int index) {
+                          Map<String, dynamic> images =
+                              json.decode(newArrBook[index]['images']);
+                          return Padding(
+                            padding: const EdgeInsets.only(right: 15.0),
+                            child: Container(
+                              width: 30.w,
+                              height: 35.w,
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(20),
+                                child: Image.network(
+                                  images['smallThumbnail'].toString(),
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      )),
               SizedBox(
                 height: 5.h,
               ),
@@ -336,19 +326,54 @@ class LendBookHomeScreenState extends State<LendBookHomeScreen> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text("On rent",
-                      style:
-                          const TextStyle(color: const Color(0xff000000), fontWeight: FontWeight.w700, fontStyle: FontStyle.normal, fontSize: 16.0),
+                      style: const TextStyle(
+                          color: const Color(0xff000000),
+                          fontWeight: FontWeight.w700,
+                          fontStyle: FontStyle.normal,
+                          fontSize: 16.0),
                       textAlign: TextAlign.center),
                   GestureDetector(
                     onTap: () {
                       GoRouter.of(context).push("/rent");
                     },
                     child: Text("View More >",
-                        style: const TextStyle(color: lentThemePrimary, fontWeight: FontWeight.w700, fontStyle: FontStyle.normal, fontSize: 10.0),
+                        style: const TextStyle(
+                            color: lentThemePrimary,
+                            fontWeight: FontWeight.w700,
+                            fontStyle: FontStyle.normal,
+                            fontSize: 10.0),
                         textAlign: TextAlign.center),
                   )
                 ],
               ),
+               SizedBox(
+                height: 2.h,
+              ),
+              Container(
+                      height: 40.w, // Adjust the height as needed
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount:
+                            newArrBook.length, // Number of items in the list
+                        itemBuilder: (BuildContext context, int index) {
+                          Map<String, dynamic> images =
+                              json.decode(newArrBook[index]['images']);
+                          return Padding(
+                            padding: const EdgeInsets.only(right: 15.0),
+                            child: Container(
+                              width: 30.w,
+                              height: 35.w,
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(20),
+                                child: Image.network(
+                                  images['smallThumbnail'].toString(),
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      )),
             ],
           ),
         ),
@@ -378,7 +403,8 @@ class LendBookHomeScreenState extends State<LendBookHomeScreen> {
                             color: Colors.grey.withOpacity(0.3),
                             spreadRadius: 2,
                             blurRadius: 4,
-                            offset: Offset(0, -2), // Adjust the offset as needed
+                            offset:
+                                Offset(0, -2), // Adjust the offset as needed
                           ),
                         ],
                       ),
@@ -410,11 +436,17 @@ class LendBookHomeScreenState extends State<LendBookHomeScreen> {
                             ),
                             Text("Rented from Mr. Ramakrishna Ramanujam",
                                 style: TextStyle(
-                                    color: const Color(0xffffffff), fontWeight: FontWeight.w400, fontStyle: FontStyle.normal, fontSize: 10.0),
+                                    color: const Color(0xffffffff),
+                                    fontWeight: FontWeight.w400,
+                                    fontStyle: FontStyle.normal,
+                                    fontSize: 10.0),
                                 textAlign: TextAlign.center),
                             Text("Return by 25th July 2023",
                                 style: TextStyle(
-                                    color: const Color(0xffffffff), fontWeight: FontWeight.w700, fontStyle: FontStyle.normal, fontSize: 12.0),
+                                    color: const Color(0xffffffff),
+                                    fontWeight: FontWeight.w700,
+                                    fontStyle: FontStyle.normal,
+                                    fontSize: 12.0),
                                 textAlign: TextAlign.start),
                             SizedBox(
                               width: 50.w,

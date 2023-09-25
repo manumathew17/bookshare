@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:bookshare/network/callback.dart';
+import 'package:bookshare/network/request_route.dart';
 import 'package:bookshare/widget/essentials/button.dart';
 import 'package:bookshare/widget/tag/general_tag.dart';
 import 'package:flutter/cupertino.dart';
@@ -14,15 +16,18 @@ import 'bottom-sheet.dart';
 
 class BookDetailsScreen extends StatefulWidget {
   const BookDetailsScreen({super.key});
-  
+
   @override
   BookDetailsState createState() => BookDetailsState();
 }
 
 class BookDetailsState extends State<BookDetailsScreen> {
+  int bookId = 0;
+  String endDate = "";
   @override
   Widget build(BuildContext context) {
     dynamic book = GoRouterState.of(context).extra;
+    bookId = book['id'];
     Map<String, dynamic> images = json.decode(book['images']);
     return Scaffold(
       appBar: AppBar(
@@ -39,7 +44,8 @@ class BookDetailsState extends State<BookDetailsScreen> {
             Navigator.of(context).pop();
           },
         ),
-        title: Text('Book details', style: header.copyWith(color: blackPrimary)),
+        title:
+            Text('Book details', style: header.copyWith(color: blackPrimary)),
       ),
       body: Stack(alignment: Alignment.center, children: [
         Padding(
@@ -64,9 +70,14 @@ class BookDetailsState extends State<BookDetailsScreen> {
                 SizedBox(
                   height: 5.h,
                 ),
-                Text(book['title'], style: header20, textAlign: TextAlign.center),
+                Text(book['title'],
+                    style: header20, textAlign: TextAlign.center),
                 Text(book['author'],
-                    style: const TextStyle(color: const Color(0xff000000), fontWeight: FontWeight.w400, fontStyle: FontStyle.normal, fontSize: 16.0),
+                    style: const TextStyle(
+                        color: const Color(0xff000000),
+                        fontWeight: FontWeight.w400,
+                        fontStyle: FontStyle.normal,
+                        fontSize: 16.0),
                     textAlign: TextAlign.center),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -74,13 +85,18 @@ class BookDetailsState extends State<BookDetailsScreen> {
                     Container(
                         width: 16,
                         height: 16,
-                        decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(8)), color: const Color(0xff4dcc21))),
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.all(Radius.circular(8)),
+                            color: const Color(0xff4dcc21))),
                     SizedBox(
                       width: 1.w,
                     ),
                     Text("In Stock ( ${book['available']} )",
-                        style:
-                            const TextStyle(color: const Color(0xff909193), fontWeight: FontWeight.w400, fontStyle: FontStyle.normal, fontSize: 10.0),
+                        style: const TextStyle(
+                            color: const Color(0xff909193),
+                            fontWeight: FontWeight.w400,
+                            fontStyle: FontStyle.normal,
+                            fontSize: 10.0),
                         textAlign: TextAlign.center),
 
                     // A haunted, surreal debut novel about an otherworldly young woman, her father, and her lover that cu
@@ -88,8 +104,7 @@ class BookDetailsState extends State<BookDetailsScreen> {
                 ),
                 Padding(
                   padding: const EdgeInsets.only(top: 10, bottom: 10),
-                  child: Text(
-                      book['description'],
+                  child: Text(book['description'],
                       style: const TextStyle(
                           color: const Color(0xff9d9ea8),
                           fontWeight: FontWeight.w400,
@@ -118,8 +133,11 @@ class BookDetailsState extends State<BookDetailsScreen> {
                       width: 1.w,
                     ),
                     const Text("times rented",
-                        style:
-                            const TextStyle(color: const Color(0xff909193), fontWeight: FontWeight.w400, fontStyle: FontStyle.normal, fontSize: 14.6),
+                        style: TextStyle(
+                            color: Color(0xff909193),
+                            fontWeight: FontWeight.w400,
+                            fontStyle: FontStyle.normal,
+                            fontSize: 14.6),
                         textAlign: TextAlign.center)
                   ],
                 ),
@@ -135,17 +153,25 @@ class BookDetailsState extends State<BookDetailsScreen> {
                             context: context,
                             builder: (BuildContext context) {
                               return MyBottomSheet(
-                                onUpdate: () => {
+                                onUpdate: (date) {
+                                  print(date);
+                                  setState(() {
+                                    endDate = date;
+                                  });
                                   showModalBottomSheet(
                                       context: context,
                                       isScrollControlled: true,
                                       useSafeArea: true,
                                       builder: (BuildContext context) {
                                         return Padding(
-                                          padding: MediaQuery.of(context).viewInsets,
-                                          child: const BookLenders(),
+                                          padding:
+                                              MediaQuery.of(context).viewInsets,
+                                          child: BookLenders(
+                                            bookId: bookId,
+                                            endDate: endDate,
+                                          ),
                                         );
-                                      })
+                                      });
                                 },
                               );
                             },
@@ -177,7 +203,8 @@ class BookDetailsState extends State<BookDetailsScreen> {
   void _openBottomSheet(BuildContext context) {
     showModalBottomSheet<void>(
       context: context,
-      isScrollControlled: true, // Allow the bottom sheet to be taller than the screen
+      isScrollControlled:
+          true, // Allow the bottom sheet to be taller than the screen
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16.0)),
       ),
