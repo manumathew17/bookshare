@@ -47,80 +47,75 @@ class BookDetailsState extends State<BookDetailsScreen> {
         title:
             Text('Book details', style: header.copyWith(color: blackPrimary)),
       ),
-      body: Stack(alignment: Alignment.center, children: [
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: SizedBox(
-            width: 100.w,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.center,
+      body: Column(
+        children: [
+          Expanded(
+            child: ListView(
               children: [
-                Container(
-                  width: 30.w,
-                  height: 40.w,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(16.0),
-                    child: Image.network(
-                      images['smallThumbnail'].toString(),
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  height: 5.h,
-                ),
-                Text(book['title'],
-                    style: header20, textAlign: TextAlign.center),
-                Text(book['author'],
-                    style: const TextStyle(
-                        color: const Color(0xff000000),
-                        fontWeight: FontWeight.w400,
-                        fontStyle: FontStyle.normal,
-                        fontSize: 16.0),
-                    textAlign: TextAlign.center),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Container(
-                        width: 16,
-                        height: 16,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.all(Radius.circular(8)),
-                            color: const Color(0xff4dcc21))),
-                    SizedBox(
-                      width: 1.w,
+                      width: 30.w,
+                      height: 40.w,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(16.0),
+                        child: Image.network(
+                          images['smallThumbnail'].toString(),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
                     ),
-                    Text("In Stock ( ${book['available']} )",
-                        style: const TextStyle(
-                            color: const Color(0xff909193),
-                            fontWeight: FontWeight.w400,
-                            fontStyle: FontStyle.normal,
-                            fontSize: 10.0),
-                        textAlign: TextAlign.center),
+                    SizedBox(height: 10),
 
-                    // A haunted, surreal debut novel about an otherworldly young woman, her father, and her lover that cu
+
+                    Text(book['title'], style: header20, textAlign: TextAlign.center),
+                    Text(book['author'],
+                        style: const TextStyle(color: const Color(0xff000000), fontWeight: FontWeight.w400, fontStyle: FontStyle.normal, fontSize: 16.0),
+                        textAlign: TextAlign.center),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                            width: 16,
+                            height: 16,
+                            decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(8)), color: const Color(0xff4dcc21))),
+                        SizedBox(
+                          width: 1.w,
+                        ),
+                        Text("In Stock ( ${book['available']} )",
+                            style:
+                            const TextStyle(color: const Color(0xff909193), fontWeight: FontWeight.w400, fontStyle: FontStyle.normal, fontSize: 10.0),
+                            textAlign: TextAlign.center),
+
+                        // A haunted, surreal debut novel about an otherworldly young woman, her father, and her lover that cu
+                      ],
+                    ),
+                    SizedBox(height: 10), // Adjust spacing as needed
+
+                    // 4. Large Scrollable Text
+                    Padding(
+                      padding: const EdgeInsets.only(top: 10, bottom: 10),
+                      child: Text(
+                          book['description'],
+                          style: const TextStyle(
+                              color: const Color(0xff9d9ea8),
+                              fontWeight: FontWeight.w400,
+                              fontFamily: "Karla",
+                              fontStyle: FontStyle.normal,
+                              fontSize: 14.0),
+                          textAlign: TextAlign.center),
+                    )
                   ],
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 10, bottom: 10),
-                  child: Text(book['description'],
-                      style: const TextStyle(
-                          color: const Color(0xff9d9ea8),
-                          fontWeight: FontWeight.w400,
-                          fontFamily: "Karla",
-                          fontStyle: FontStyle.normal,
-                          fontSize: 14.0),
-                      textAlign: TextAlign.center),
-                )
               ],
             ),
           ),
-        ),
-        Positioned(
-          bottom: 10,
-          child: Container(
-            width: 100.w,
+
+          // 5. Button at the Bottom
+          Container(
+            margin: EdgeInsets.symmetric(vertical: 10),
+            width: double.infinity,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -195,16 +190,17 @@ class BookDetailsState extends State<BookDetailsScreen> {
               ],
             ),
           ),
-        )
-      ]),
+        ],
+      )
+
+
     );
   }
 
   void _openBottomSheet(BuildContext context) {
     showModalBottomSheet<void>(
       context: context,
-      isScrollControlled:
-          true, // Allow the bottom sheet to be taller than the screen
+      isScrollControlled: true, // Allow the bottom sheet to be taller than the screen
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16.0)),
       ),
