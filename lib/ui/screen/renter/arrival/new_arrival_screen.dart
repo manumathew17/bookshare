@@ -23,6 +23,7 @@ class NewArrivalScreen extends StatefulWidget {
 class NewArrivalState extends State<NewArrivalScreen> {
    RequestRouter requestRouter = RequestRouter();
    List newArrBook = [];
+   String q = "";
    @override
   void initState() {
     super.initState();
@@ -31,14 +32,13 @@ class NewArrivalState extends State<NewArrivalScreen> {
     void loadNewArrivals() {
     requestRouter.get(
         'books-for-rent',
-        {"per_page": '25'},
+        {"per_page": '25', "q" : q.toString()},
         RequestCallbacks(
             onSuccess: (response) {
               Map<String, dynamic> jsonMap = json.decode(response);
+              print(jsonMap['books']['data']);
               setState(() {
-                setState(() {
-                  newArrBook = jsonMap['books']['data'];
-                });
+                 newArrBook = jsonMap['books']['data'];
               });
             },
             onError: (error) {}));
@@ -68,12 +68,19 @@ class NewArrivalState extends State<NewArrivalScreen> {
           Padding(
             padding: const EdgeInsets.only(left: 15, right: 15, bottom: 15, top: 15),
             child: TextFormField(
+                onChanged: (value) {
+                  setState(() {
+                    q = value;
+                  });
+                },
                 keyboardType: TextInputType.name,
                 decoration: inputDecoration.copyWith(
                     label: const Text('Search...'),
                     suffixIcon: GestureDetector(
                       child: const Icon(Icons.search_rounded),
-                      onTap: () => {Logger.log("clicked")},
+                      onTap: () {
+                        loadNewArrivals();
+                      },
                     ))),
           ),
           Expanded(

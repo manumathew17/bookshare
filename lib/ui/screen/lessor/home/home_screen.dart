@@ -7,6 +7,7 @@ import 'package:bookshare/ui/screen/home/home_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 
@@ -24,6 +25,7 @@ class LendBookHomeScreen extends StatefulWidget {
 
 class LendBookHomeScreenState extends State<LendBookHomeScreen> {
   List newArrBook = [];
+  List booksOnRent = [];
   RequestRouter requestRouter = RequestRouter();
   late AuthProvider authProvider;
   List<GridItem> gridItems = [];
@@ -32,23 +34,59 @@ class LendBookHomeScreenState extends State<LendBookHomeScreen> {
   void initState() {
     super.initState();
     loadNewArrivals();
+    loadBookOnRent();
   }
 
   void loadNewArrivals() {
     requestRouter.get(
         'books-for-rent',
-        {"per_page": '6'},
+        {"per_page": '6', 'mybook': 'true'},
         RequestCallbacks(
             onSuccess: (response) {
               Map<String, dynamic> jsonMap = json.decode(response);
-              print(jsonMap['books']);
               setState(() {
-                setState(() {
                   newArrBook = jsonMap['books']['data'];
                 });
+            },
+            onError: (error) {}));
+  }
+
+    void loadBookOnRent() {
+    requestRouter.get(
+        'books-on-rent',
+        {"renter": 'true'},
+        RequestCallbacks(
+            onSuccess: (response) {
+              Map<dynamic, dynamic> jsonMap = json.decode(response);
+              print(jsonMap);
+              List booksOnRentTemp = [];
+              jsonMap['books'].forEach((item) {
+                item['images'] = json.decode(item['images']);
+                booksOnRentTemp.add(item);
+              });
+              setState(() {
+                booksOnRent = booksOnRentTemp;
+                getRemaningValue(booksOnRent[0]);
               });
             },
             onError: (error) {}));
+  }
+
+  String getReturnDate(books) {
+    DateTime inputDate = DateFormat("yyyy-MM-dd").parse(books['rent_end_date']);
+    return  DateFormat("d'th' MMMM yyyy").format(inputDate);
+  }
+
+  double getRemaningValue(books) {
+    DateTime startDate = DateTime.parse(books['rent_start_date']);
+    DateTime endDate = DateTime.parse(books['rent_end_date']);
+    DateTime now = DateTime.now();
+    Duration diff1 = endDate.difference(startDate);
+    Duration diff2 = endDate.difference(now);
+   if(diff1.inDays - diff2.inDays > 0) {
+    return (diff1.inDays - diff2.inDays) / diff1.inDays ;
+   }
+   return 0;
   }
 
   @override
@@ -409,6 +447,7 @@ class LendBookHomeScreenState extends State<LendBookHomeScreen> {
                         ],
                       ),
                     )),
+                 booksOnRent.isNotEmpty ? 
                 Positioned(
                     bottom: 2,
                     left: 5.w,
@@ -419,7 +458,7 @@ class LendBookHomeScreenState extends State<LendBookHomeScreen> {
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(8.0),
                           child: Image.network(
-                            'https://images1.penguinrandomhouse.com/cover/9780593500507',
+                            booksOnRent[0]['images']['smallThumbnail'].toString(),
                             fit: BoxFit.cover,
                           ),
                         ),
@@ -434,14 +473,14 @@ class LendBookHomeScreenState extends State<LendBookHomeScreen> {
                             SizedBox(
                               height: 2.h,
                             ),
-                            Text("Rented from Mr. Ramakrishna Ramanujam",
+                            Text("Rented from Mr. ${ booksOnRent[0]['name']}",
                                 style: TextStyle(
                                     color: const Color(0xffffffff),
                                     fontWeight: FontWeight.w400,
                                     fontStyle: FontStyle.normal,
                                     fontSize: 10.0),
                                 textAlign: TextAlign.center),
-                            Text("Return by 25th July 2023",
+                            Text("Return by  ${getReturnDate(booksOnRent[0])}",
                                 style: TextStyle(
                                     color: const Color(0xffffffff),
                                     fontWeight: FontWeight.w700,
@@ -451,13 +490,13 @@ class LendBookHomeScreenState extends State<LendBookHomeScreen> {
                             SizedBox(
                               width: 50.w,
                               child: LinearProgressIndicator(
-                                value: 0.5,
+                                value: getRemaningValue(booksOnRent[0]),
                               ),
                             )
                           ],
                         ),
                       ),
-                    ]))
+                    ])): SizedBox(height: 0)
               ],
             ),
           ),

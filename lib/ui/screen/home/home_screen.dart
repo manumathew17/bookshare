@@ -25,8 +25,10 @@ class HomeScreen extends StatefulWidget {
 
 class HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
+   DateTime today = DateTime.now();
   List newArrBook = [];
   List categories = [];
+  List booksOnRent = [];
   RequestRouter requestRouter = RequestRouter();
   late AuthProvider authProvider;
   List<GridItem> gridItems = [];
@@ -44,6 +46,7 @@ class HomeScreenState extends State<HomeScreen> {
     super.initState();
     loadNewArrivals();
     loadCategories();
+    loadBookOnRent();
     authProvider = Provider.of<AuthProvider>(context, listen: false);
     authProvider.getUserProfile();
   }
@@ -55,7 +58,6 @@ class HomeScreenState extends State<HomeScreen> {
         RequestCallbacks(
             onSuccess: (response) {
               Map<String, dynamic> jsonMap = json.decode(response);
-              print(jsonMap['books']);
               setState(() {
                 setState(() {
                   newArrBook = jsonMap['books']['data'];
@@ -81,7 +83,42 @@ class HomeScreenState extends State<HomeScreen> {
             },
             onError: (error) {}));
   }
+   void loadBookOnRent() {
+    requestRouter.get(
+        'books-on-rent',
+        {"renter": ''},
+        RequestCallbacks(
+            onSuccess: (response) {
+              Map<dynamic, dynamic> jsonMap = json.decode(response);
+              List booksOnRentTemp = [];
+              jsonMap['books'].forEach((item) {
+                item['images'] = json.decode(item['images']);
+                booksOnRentTemp.add(item);
+              });
+              setState(() {
+                booksOnRent = booksOnRentTemp;
+                getRemaningValue(booksOnRent[0]);
+              });
+            },
+            onError: (error) {}));
+  }
 
+  String getReturnDate(books) {
+    DateTime inputDate = DateFormat("yyyy-MM-dd").parse(books['rent_end_date']);
+    return  DateFormat("d'th' MMMM yyyy").format(inputDate);
+  }
+
+  double getRemaningValue(books) {
+    DateTime startDate = DateTime.parse(books['rent_start_date']);
+    DateTime endDate = DateTime.parse(books['rent_end_date']);
+    DateTime now = DateTime.now();
+    Duration diff1 = endDate.difference(startDate);
+    Duration diff2 = endDate.difference(now);
+   if(diff1.inDays - diff2.inDays > 0) {
+    return (diff1.inDays - diff2.inDays) / diff1.inDays ;
+   }
+   return 0;
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -145,8 +182,8 @@ class HomeScreenState extends State<HomeScreen> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      const Text("25",
-                          style: TextStyle(
+                      Text(today.day.toString(),
+                          style: const TextStyle(
                               color: Color(0xff000000),
                               fontWeight: FontWeight.w700,
                               fontStyle: FontStyle.normal,
@@ -155,19 +192,19 @@ class HomeScreenState extends State<HomeScreen> {
                       SizedBox(
                         width: 2.w,
                       ),
-                      const Column(
+                       Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Text("Tuesday",
-                              style: TextStyle(
+                          Text(DateFormat('EEEE').format(today),
+                              style: const TextStyle(
                                   color: Color(0xff909193),
                                   fontWeight: FontWeight.w400,
                                   fontStyle: FontStyle.normal,
                                   fontSize: 14.0),
                               textAlign: TextAlign.center),
-                          Text("July 2023",
-                              style: TextStyle(
+                          Text(DateFormat('MMM yyyy').format(today),
+                              style: const TextStyle(
                                   color: Color(0xff909193),
                                   fontWeight: FontWeight.w400,
                                   fontStyle: FontStyle.normal,
@@ -304,6 +341,7 @@ class HomeScreenState extends State<HomeScreen> {
                             ],
                           ),
                         )),
+                    booksOnRent.isNotEmpty ? 
                     Positioned(
                         bottom: 2,
                         left: 5.w,
@@ -314,7 +352,7 @@ class HomeScreenState extends State<HomeScreen> {
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(8.0),
                               child: Image.network(
-                                'https://images1.penguinrandomhouse.com/cover/9780593500507',
+                                booksOnRent[0]['images']['smallThumbnail'].toString(),
                                 fit: BoxFit.cover,
                               ),
                             ),
@@ -329,16 +367,16 @@ class HomeScreenState extends State<HomeScreen> {
                                 SizedBox(
                                   height: 2.h,
                                 ),
-                                Text("Rented from Mr. Ramakrishna Ramanujam",
-                                    style: TextStyle(
-                                        color: const Color(0xffffffff),
+                                Text("Rented from Mr. ${ booksOnRent[0]['name']}",
+                                    style: const TextStyle(
+                                        color:  Color(0xffffffff),
                                         fontWeight: FontWeight.w400,
                                         fontStyle: FontStyle.normal,
                                         fontSize: 10.0),
                                     textAlign: TextAlign.center),
-                                Text("Return by 25th July 2023",
-                                    style: TextStyle(
-                                        color: const Color(0xffffffff),
+                                Text("Return by ${getReturnDate(booksOnRent[0])}",
+                                    style: const TextStyle(
+                                        color: Color(0xffffffff),
                                         fontWeight: FontWeight.w700,
                                         fontStyle: FontStyle.normal,
                                         fontSize: 12.0),
@@ -346,13 +384,13 @@ class HomeScreenState extends State<HomeScreen> {
                                 SizedBox(
                                   width: 50.w,
                                   child: LinearProgressIndicator(
-                                    value: 0.5,
+                                    value: getRemaningValue(booksOnRent[0]),
                                   ),
                                 )
                               ],
                             ),
                           ),
-                        ]))
+                        ])) : const SizedBox(height: 0,)
                   ],
                 ),
               ),

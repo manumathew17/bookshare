@@ -104,7 +104,7 @@ class BookLendersState extends State<BookLenders> {
               });
               var options = {
                 "key": "rzp_test_wYGTVVN9s3z8GV",
-                "amount": 100 * 100,
+                "amount": double.parse(order['payment']['amount'].toString()) * 100,
                 "name": "LicExamGuru",
                 "description": "Purches credit for mandi app",
                 "prefill": {
@@ -115,6 +115,7 @@ class BookLendersState extends State<BookLenders> {
                   'wallets': ['paytm']
                 },
               };
+              print(options);
               try {
                 _razorpay.open(options);
               } catch (e) {

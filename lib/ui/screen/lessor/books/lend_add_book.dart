@@ -36,6 +36,7 @@ class LendAddBookScreenState extends State<LendAddBookScreen> {
     _scrollController.addListener(_scrollListener);
     _bookProvider.queryParams['page'] = 1;
     _bookProvider.queryParams['q'] = "";
+    _bookProvider.queryParams['mybook'] = false;
     _bookProvider.book.clear();
     _getBook();
     super.initState();
@@ -44,7 +45,7 @@ class LendAddBookScreenState extends State<LendAddBookScreen> {
   void _scrollListener() {
     if (_scrollController.position.pixels ==
         _scrollController.position.maxScrollExtent) {
-      if (!_bookProvider.isLoading) {
+      if (!_bookProvider.isLoading && (_bookProvider.queryParams['page'] == 1 || _bookProvider.queryParams['q'] == "")) {
         _getBook();
       }
     }
@@ -63,7 +64,7 @@ class LendAddBookScreenState extends State<LendAddBookScreen> {
   Widget build(BuildContext context) {
     return Consumer<BookProvider>(builder: (context, bookProvider, child) {
       return Scaffold(
-          body: bookProvider.book.isEmpty
+          body: bookProvider.book.isEmpty && bookProvider.isLoading
               ? const GeneralShimmer()
               : Column(
                   children: [
