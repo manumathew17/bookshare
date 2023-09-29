@@ -1,7 +1,7 @@
+import 'package:bookshare/ui/screen/lessor/rent/bottom-sheet/accept_return.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
-
 
 import '../../../../theme/app_style.dart';
 import '../../../../theme/colors.dart';
@@ -95,8 +95,13 @@ class OnRentScreenState extends State<OnRentScreen> {
                                   onClick: () => {
                                         showModalBottomSheet(
                                           context: context,
+                                          isScrollControlled: true,
+                                          useSafeArea: true,
                                           builder: (BuildContext context) {
-                                            return const WaiveOffBottomSheet();
+                                            return Padding(
+                                              padding: MediaQuery.of(context).viewInsets,
+                                              child: const WaiveOffBottomSheet(),//for entering amount and wave off    //  return AcceptReturn(); // fo no penalty and accept return
+                                            );
                                           },
                                         )
                                       })

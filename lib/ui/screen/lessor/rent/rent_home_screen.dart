@@ -1,3 +1,4 @@
+import 'package:bookshare/ui/screen/lessor/rent/returned_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -58,7 +59,7 @@ class RentHomeScreenState extends State<RentHomeScreen> with TickerProviderState
         controller: _tabController,
         children: const <Widget>[
           OnRentScreen(),
-          Text("TO DO")
+          ReturnedScreen()
         ],
       ),
     );

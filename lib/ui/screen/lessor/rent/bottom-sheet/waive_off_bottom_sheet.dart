@@ -1,3 +1,4 @@
+import 'package:bookshare/ui/screen/success/return_success_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 
@@ -14,7 +15,8 @@ class WaiveOffBottomSheet extends StatefulWidget {
 }
 
 class _WaiveOffBottomSheetState extends State<WaiveOffBottomSheet> {
-  final TextEditingController _dateController = TextEditingController();
+  final TextEditingController amountController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -28,6 +30,7 @@ class _WaiveOffBottomSheetState extends State<WaiveOffBottomSheet> {
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
@@ -58,10 +61,38 @@ class _WaiveOffBottomSheetState extends State<WaiveOffBottomSheet> {
                 Navigator.of(context).pop(),
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const SuccessScreen()),
+                  MaterialPageRoute(builder: (context) => const ReturnSuccessScreen(text: "Return Has been accepted")),
                 )
               },
               backgroundColor: greenButton,
+            ),
+          ),
+          const Padding(
+            padding: EdgeInsets.all(20),
+            child: Text("OR", style: header12, textAlign: TextAlign.center),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(left: 20, right: 20, top: 5, bottom: 5),
+            child: Form(
+              key: _formKey,
+              child: TextFormField(
+                controller: amountController,
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  label: const Text('Enter amount manually'),
+                  hintText: '10',
+                  hintStyle: header12.copyWith(color: textGrey),
+                  border: const OutlineInputBorder(borderSide: BorderSide.none, borderRadius: BorderRadius.all(Radius.circular(14))),
+                  filled: true,
+                  fillColor: textWhiteGrey,
+                ),
+                validator: (value) {
+                  if (value?.isEmpty ?? true) {
+                    return 'Enter amount';
+                  }
+                  return null;
+                },
+              ),
             ),
           ),
           // Padding(
@@ -86,11 +117,11 @@ class _WaiveOffBottomSheetState extends State<WaiveOffBottomSheet> {
               width: 100.w,
               text: "Proceed",
               onClick: () => {
-                Navigator.of(context).pop(),
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const SuccessScreen()),
-                )
+                if (_formKey.currentState!.validate())
+                  {
+                    Navigator.of(context).pop(),
+                    //to do wave off  penalty
+                  }
               },
               backgroundColor: lentThemePrimary,
             ),
