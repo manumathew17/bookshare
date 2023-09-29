@@ -55,10 +55,12 @@ class LoginScreenState extends State<LoginScreen> {
       Loader.show(context);
       requestRouter.validateUser(
           requestBody,
-          RequestCallbacks(onSuccess: (response) {
+          RequestCallbacks(onSuccess: (response) async{
             Map<String, dynamic> jsonMap = json.decode(response);
             AccountConfig.userDetail = UserDetail.fromJson(jsonMap);
             Provider.of<AuthProvider>(context, listen: false).storeDetails(AccountConfig.userDetail);
+            final authProvider = Provider.of<AuthProvider>(context, listen: false);
+            final isLogged = await authProvider.isLoggedIn();
             context.go('/home');
           }, onError: (error) {
             _generalSnackBar.showErrorSnackBar("Authentication failed");

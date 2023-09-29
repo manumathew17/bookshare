@@ -1,3 +1,8 @@
+import 'dart:convert';
+
+import 'package:bookshare/config/account.dart';
+import 'package:bookshare/config/const.dart';
+import 'package:bookshare/model/model_user.dart';
 import 'package:bookshare/network/callback.dart';
 import 'package:bookshare/network/request_route.dart';
 import 'package:bookshare/widget/components/snackbar.dart';
@@ -5,6 +10,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lottie/lottie.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../../theme/app_style.dart';
@@ -142,20 +148,31 @@ class LocationScreenState extends State<LocationScreen> {
       _updateAddress(_addressLine1.text, _addressLine2.text, _addressLine3.text);
       //_updateCustomerDetails(nameController.text, mobileController.text);
     }
-    context.go('/home');
+    //context.go('/home');
   }
 
-  _updateAddress(line1, line2, line3) {
+  _updateAddress(address, state, country) {
     RequestRouter requestRouter = RequestRouter();
     GeneralSnackBar generalSnackBar = GeneralSnackBar(context);
-    final postBody = {"address": "$line1\n$line2\n$line3"};
+    final postBody = {"address": address, 'state': state, 'country':country};
+    print(postBody);
+    print(postBody);
     requestRouter.updateProfile(
         postBody,
         RequestCallbacks(
             onSuccess: (response) {
+              Map<String, dynamic> jsonMap = json.decode(response);
+              AccountConfig.userDetail = UserDetail.fromJson(jsonMap);
+              storeDetails(AccountConfig.userDetail);
               Sparkle.show(context);
               context.go('/home');
             },
             onError: (error) => {generalSnackBar.showErrorSnackBar("Error while adding address please retry")}));
+  }
+   Future<bool> storeDetails(UserDetail userDetail) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final jsonMap = userDetail.toJson();
+    final jsonString = jsonEncode(jsonMap);
+    return await prefs.setString(SharedPrefKeys.login.name, jsonString);
   }
 }

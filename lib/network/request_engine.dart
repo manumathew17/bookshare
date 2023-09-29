@@ -20,7 +20,7 @@ class NetworkRequest {
 
   Future<void> getCall(String route, Map<String, dynamic>? queryParams, RequestCallbacks requestCallbacks) async {
     Logger.log(Uri.parse(API_ENDPOINT + route).replace(queryParameters: queryParams));
-    Logger.log(AccountConfig.JWT_TOKEN);
+    // Logger.log(AccountConfig.JWT_TOKEN);
     try {
       final response = await http.get(Uri.parse(API_ENDPOINT + route).replace(queryParameters: queryParams), headers: getHeaders());
 
