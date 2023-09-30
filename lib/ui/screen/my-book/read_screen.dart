@@ -1,3 +1,7 @@
+import 'dart:convert';
+
+import 'package:bookshare/network/callback.dart';
+import 'package:bookshare/network/request_route.dart';
 import 'package:bookshare/widget/essentials/button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -17,12 +21,44 @@ class ReadScreen extends StatefulWidget {
 }
 
 class ReadScreenState extends State<ReadScreen> {
+    List booksOnRent = [];
+  RequestRouter requestRouter = RequestRouter();
+  @override
+  void initState() {
+    super.initState();
+    loadBookOnRent();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  void loadBookOnRent() {
+    requestRouter.get(
+        'books-on-rent',
+        {"renter": ''},
+        RequestCallbacks(
+            onSuccess: (response) {
+              print(response);
+              Map<dynamic, dynamic> jsonMap = json.decode(response);
+              List booksOnRentTemp = [];
+              jsonMap['books'].forEach((item) {
+                item['images'] = json.decode(item['images']);
+                booksOnRentTemp.add(item);
+              });
+              setState(() {
+                booksOnRent = booksOnRentTemp;
+              });
+            },
+            onError: (error) {}));
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         body: ListView.builder(
             shrinkWrap: true,
-            itemCount: 10,
+            itemCount: booksOnRent.length,
             itemBuilder: (context, index) {
               return Padding(
                 padding: const EdgeInsets.only(top: 0, bottom: 20, left: 15, right: 15),
@@ -39,7 +75,7 @@ class ReadScreenState extends State<ReadScreen> {
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(14.0),
                             child: Image.network(
-                              'https://images1.penguinrandomhouse.com/cover/9780593500507',
+                              booksOnRent[index]['images']['smallThumbnail'].toString(),
                               fit: BoxFit.cover,
                             ),
                           ),
@@ -53,13 +89,13 @@ class ReadScreenState extends State<ReadScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
                               Text(
-                                "Follow me to ground",
+                                booksOnRent[index]['title'].toString(),
                                 overflow: TextOverflow.ellipsis,
                                 maxLines: 1,
                                 style: heading1Bold,
                               ),
                               Text(
-                                "by sure Rainford",
+                                "by ${booksOnRent[index]['author']}",
                                 style: heading1,
                               ),
                               Padding(
@@ -72,7 +108,7 @@ class ReadScreenState extends State<ReadScreen> {
                                       borderRadius: BorderRadius.all(Radius.circular(8)),
                                     )),
                               ),
-                              Text("Rented from Mr. Ramakrishna Ramanujam",
+                              Text("Rented from Mr. ${booksOnRent[index]['name']}",
                                   style: const TextStyle(
                                       color: const Color(0xff000000), fontWeight: FontWeight.w400, fontStyle: FontStyle.normal, fontSize: 10.0),
                                   textAlign: TextAlign.left),

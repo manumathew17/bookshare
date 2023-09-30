@@ -50,7 +50,7 @@ class HomeScreenState extends State<HomeScreen> {
     authProvider = Provider.of<AuthProvider>(context, listen: false);
     authProvider.getUserProfile();
   }
-
+  
   void loadNewArrivals() {
     requestRouter.get(
         'books-for-rent',
@@ -308,7 +308,10 @@ class HomeScreenState extends State<HomeScreen> {
                 ],
               ),
             ),
-
+            booksOnRent.isNotEmpty ? 
+            InkWell(
+              onTap: () => {GoRouter.of(context).push("/my-read")},
+              child: 
             Positioned(
               bottom: 0,
               left: 0,
@@ -341,7 +344,6 @@ class HomeScreenState extends State<HomeScreen> {
                             ],
                           ),
                         )),
-                    booksOnRent.isNotEmpty ? 
                     Positioned(
                         bottom: 2,
                         left: 5.w,
@@ -390,11 +392,11 @@ class HomeScreenState extends State<HomeScreen> {
                               ],
                             ),
                           ),
-                        ])) : const SizedBox(height: 0,)
+                        ])) 
                   ],
                 ),
               ),
-            ),
+            )) : SizedBox(height: 0,),
 
             // Positioned(
             //   bottom: 0,

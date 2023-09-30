@@ -29,14 +29,28 @@ class LendBookHomeScreenState extends State<LendBookHomeScreen> {
   RequestRouter requestRouter = RequestRouter();
   late AuthProvider authProvider;
   List<GridItem> gridItems = [];
-
+  dynamic dash = {"total_count":'0',"total_incone":'0',"book_overdue":'0',"total_overdue_collect":'0'};
   @override
   void initState() {
     super.initState();
     loadNewArrivals();
     loadBookOnRent();
+    loadDash();
   }
 
+  void loadDash() {
+   requestRouter.get(
+        'renter-dash',
+        {'page': '1'},
+        RequestCallbacks(
+            onSuccess: (response) {
+              Map<String, dynamic> jsonMap = json.decode(response);
+              setState(() {
+                dash = jsonMap;
+              });
+            },
+            onError: (error) {}));
+  }
   void loadNewArrivals() {
     requestRouter.get(
         'books-for-rent',
@@ -143,7 +157,7 @@ class LendBookHomeScreenState extends State<LendBookHomeScreen> {
                             textAlign: TextAlign.left,
                           ),
                           Text(
-                            "0",
+                            "${dash['total_count']}",
                             style: const TextStyle(
                               color: const Color(0xff000000),
                               fontWeight: FontWeight.w700,
@@ -183,7 +197,7 @@ class LendBookHomeScreenState extends State<LendBookHomeScreen> {
                             textAlign: TextAlign.left,
                           ),
                           Text(
-                            "0",
+                             "${dash['total_incone']}",
                             style: const TextStyle(
                               color: const Color(0xff000000),
                               fontWeight: FontWeight.w700,
@@ -232,7 +246,7 @@ class LendBookHomeScreenState extends State<LendBookHomeScreen> {
                             textAlign: TextAlign.left,
                           ),
                           Text(
-                            "0",
+                            "${dash['book_overdue']}",
                             style: const TextStyle(
                               color: const Color(0xff000000),
                               fontWeight: FontWeight.w700,
@@ -272,7 +286,7 @@ class LendBookHomeScreenState extends State<LendBookHomeScreen> {
                             textAlign: TextAlign.left,
                           ),
                           Text(
-                            "0",
+                             "${dash['total_overdue_collect']}",
                             style: const TextStyle(
                               color: const Color(0xff000000),
                               fontWeight: FontWeight.w700,
@@ -392,7 +406,7 @@ class LendBookHomeScreenState extends State<LendBookHomeScreen> {
                       child: ListView.builder(
                         scrollDirection: Axis.horizontal,
                         itemCount:
-                            newArrBook.length, // Number of items in the list
+                            booksOnRent.length, // Number of items in the list
                         itemBuilder: (BuildContext context, int index) {
                           Map<String, dynamic> images =
                               json.decode(newArrBook[index]['images']);
@@ -415,6 +429,7 @@ class LendBookHomeScreenState extends State<LendBookHomeScreen> {
             ],
           ),
         ),
+        booksOnRent.isNotEmpty ? 
         Positioned(
           bottom: 0,
           left: 0,
@@ -447,7 +462,6 @@ class LendBookHomeScreenState extends State<LendBookHomeScreen> {
                         ],
                       ),
                     )),
-                 booksOnRent.isNotEmpty ? 
                 Positioned(
                     bottom: 2,
                     left: 5.w,
@@ -496,11 +510,11 @@ class LendBookHomeScreenState extends State<LendBookHomeScreen> {
                           ],
                         ),
                       ),
-                    ])): SizedBox(height: 0)
+                    ]))
               ],
             ),
           ),
-        ),
+        ): SizedBox(height: 0,),
       ]),
     );
   }
