@@ -45,7 +45,7 @@ class ReturnSuccessScreenState extends State<ReturnSuccessScreen> {
             Button(
               width: 70,
               text: "Done",
-              onClick: () => {context.go('/home')},
+              onClick: () => {Navigator.of(context).pop()},
               backgroundColor: lentThemePrimary,
             )
           ],

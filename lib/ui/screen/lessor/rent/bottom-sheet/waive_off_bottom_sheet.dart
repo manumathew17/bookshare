@@ -8,8 +8,9 @@ import '../../../../../widget/essentials/button.dart';
 import '../../../success/success-screen.dart';
 
 class WaiveOffBottomSheet extends StatefulWidget {
-  const WaiveOffBottomSheet({super.key});
-
+  const WaiveOffBottomSheet({super.key, required this.totalFine, required this.onProcess});
+  final double totalFine;
+  final Function? onProcess;
   @override
   _WaiveOffBottomSheetState createState() => _WaiveOffBottomSheetState();
 }
@@ -17,7 +18,7 @@ class WaiveOffBottomSheet extends StatefulWidget {
 class _WaiveOffBottomSheetState extends State<WaiveOffBottomSheet> {
   final TextEditingController amountController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-
+  String amount = "";
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -57,12 +58,13 @@ class _WaiveOffBottomSheetState extends State<WaiveOffBottomSheet> {
             child: Button(
               width: 100.w,
               text: "Provide full waive off 45",
-              onClick: () => {
-                Navigator.of(context).pop(),
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const ReturnSuccessScreen(text: "Return Has been accepted")),
-                )
+              onClick: () {
+                Navigator.of(context).pop();
+                widget.onProcess!(widget.totalFine);
+                // Navigator.push(
+                //   context,
+                //   MaterialPageRoute(builder: (context) => const ReturnSuccessScreen(text: "Return Has been accepted")),
+                // )
               },
               backgroundColor: greenButton,
             ),
@@ -116,12 +118,13 @@ class _WaiveOffBottomSheetState extends State<WaiveOffBottomSheet> {
             child: Button(
               width: 100.w,
               text: "Proceed",
-              onClick: () => {
-                if (_formKey.currentState!.validate())
-                  {
-                    Navigator.of(context).pop(),
-                    //to do wave off  penalty
-                  }
+              onClick: () {
+                Navigator.of(context).pop();
+                widget.onProcess!(double.parse(amountController.text));
+                // if (_formKey.currentState!.validate())
+                //   {
+                //     Navigator.of(context).pop();
+                //   }
               },
               backgroundColor: lentThemePrimary,
             ),

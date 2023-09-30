@@ -53,7 +53,6 @@ class BookLendersState extends State<BookLenders> {
         },
         RequestCallbacks(
             onSuccess: (response) {
-             print(response);
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => const SuccessScreen()),
@@ -82,25 +81,22 @@ class BookLendersState extends State<BookLenders> {
 
   void openCheckout(dynamic book) {
     Navigator.of(context).pop();
-    setState(() {
-      selectedBook = book;
-    });
     DateTime now = DateTime.now();
     String startDate = DateFormat('yyyy-MM-dd').format(now);
     requestRouter.post(
         'get-book-on-rent',
         {
           'book_id': widget.bookId,
-          'book_for_rent_id': selectedBook['book_for_rent_id'],
+          'book_for_rent_id': book['book_for_rent_id'],
           'rent_start_date': startDate.toString(),
           'rent_end_date': widget.endDate.toString()
         },
         RequestCallbacks(
             onSuccess: (response) {
-              print(response);
               Map<String, dynamic> jsonMap = json.decode(response);
               setState(() {
                 order = jsonMap;
+                selectedBook = book;
               });
               var options = {
                 "key": "rzp_test_wYGTVVN9s3z8GV",
@@ -115,7 +111,6 @@ class BookLendersState extends State<BookLenders> {
                   'wallets': ['paytm']
                 },
               };
-              print(options);
               try {
                 _razorpay.open(options);
               } catch (e) {
@@ -136,8 +131,8 @@ class BookLendersState extends State<BookLenders> {
         {"book_id": widget.bookId.toString(),"rent_end_date": widget.endDate.toString() },
         RequestCallbacks(
             onSuccess: (response) {
+              print(response);
               Map<String, dynamic> jsonMap = json.decode(response);
-              print(jsonMap);
               setState(() {
                 bookWonners = jsonMap['woners'];
               });

@@ -2,16 +2,18 @@ import 'dart:convert';
 
 import 'package:bookshare/network/callback.dart';
 import 'package:bookshare/network/request_route.dart';
+import 'package:bookshare/ui/screen/success/success-screen.dart';
 import 'package:bookshare/widget/essentials/button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
+import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../../theme/app_style.dart';
 import '../../../theme/colors.dart';
-
-
 
 class ReadScreen extends StatefulWidget {
   const ReadScreen({super.key});
@@ -21,12 +23,18 @@ class ReadScreen extends StatefulWidget {
 }
 
 class ReadScreenState extends State<ReadScreen> {
-    List booksOnRent = [];
+  List booksOnRent = [];
+  late Razorpay _razorpay;
+  dynamic order;
   RequestRouter requestRouter = RequestRouter();
   @override
   void initState() {
     super.initState();
     loadBookOnRent();
+    _razorpay = Razorpay();
+    _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
+    _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
+    _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
   }
 
   @override
@@ -40,7 +48,6 @@ class ReadScreenState extends State<ReadScreen> {
         {"renter": ''},
         RequestCallbacks(
             onSuccess: (response) {
-              print(response);
               Map<dynamic, dynamic> jsonMap = json.decode(response);
               List booksOnRentTemp = [];
               jsonMap['books'].forEach((item) {
@@ -53,6 +60,92 @@ class ReadScreenState extends State<ReadScreen> {
             },
             onError: (error) {}));
   }
+
+  Future<void> _handlePaymentSuccess(PaymentSuccessResponse response) async {
+    Fluttertoast.showToast(
+        msg: "SUCCESS: ${response.paymentId}", toastLength: Toast.LENGTH_SHORT);
+    requestRouter.post(
+        'penalty-payment-success',
+        {
+          "payment_id": order['payment']['id'].toString(),
+          "payment_responce": response.toString(),
+          "transaction_id": response.paymentId.toString()
+        },
+        RequestCallbacks(
+            onSuccess: (response) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const SuccessScreen()),
+              );
+              loadBookOnRent();
+            },
+            onError: (error) {}));
+  }
+
+  void _handlePaymentError(PaymentFailureResponse response) {
+    Fluttertoast.showToast(
+        msg: "ERROR: ${response.code} - ${response.message}",
+        toastLength: Toast.LENGTH_SHORT);
+    requestRouter.post(
+        'penalty-payment-failed',
+        {
+          "payment_id": order['payment']['id'].toString(),
+        },
+        RequestCallbacks(onSuccess: (response) {}, onError: (error) {}));
+  }
+
+  void openCheckout(dynamic bookForRent, double amount) {
+    if (amount <= 0) {
+      return;
+    }
+    requestRouter.post(
+        'pay-penalty',
+        {
+          'book_on_rent_id': bookForRent['id'],
+        },
+        RequestCallbacks(
+            onSuccess: (response) {
+              Map<String, dynamic> jsonMap = json.decode(response);
+              setState(() {
+                order = jsonMap;
+              });
+              if (order['payment'] == 'false') {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const SuccessScreen()),
+                );
+                return;
+              }
+              var options = {
+                "key": "rzp_test_wYGTVVN9s3z8GV",
+                "amount":
+                    double.parse(order['payment']['amount'].toString()) * 100,
+                "name": "LicExamGuru",
+                "description": "Purches credit for mandi app",
+                "prefill": {
+                  "contact": "7506163660",
+                  "email": "rajnimt16@gmail.com"
+                },
+                'external': {
+                  'wallets': ['paytm']
+                },
+              };
+              try {
+                _razorpay.open(options);
+              } catch (e) {
+                debugPrint(e.toString());
+              }
+            },
+            onError: (error) {}));
+  }
+
+  Future<void> _handleExternalWallet(ExternalWalletResponse response) async {
+    Fluttertoast.showToast(
+        msg: "EXTERNAL_WALLET: ${response.walletName}",
+        toastLength: Toast.LENGTH_SHORT);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -60,8 +153,13 @@ class ReadScreenState extends State<ReadScreen> {
             shrinkWrap: true,
             itemCount: booksOnRent.length,
             itemBuilder: (context, index) {
+              double totalAmount =
+                  double.parse(booksOnRent[index]['total_amount'].toString());
+              double paidAmount =
+                  double.parse(booksOnRent[index]['paid_amount'].toString());
               return Padding(
-                padding: const EdgeInsets.only(top: 0, bottom: 20, left: 15, right: 15),
+                padding: const EdgeInsets.only(
+                    top: 0, bottom: 20, left: 15, right: 15),
                 child: Container(
                   decoration: generalBoxDecoration,
                   child: Padding(
@@ -75,7 +173,8 @@ class ReadScreenState extends State<ReadScreen> {
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(14.0),
                             child: Image.network(
-                              booksOnRent[index]['images']['smallThumbnail'].toString(),
+                              booksOnRent[index]['images']['smallThumbnail']
+                                  .toString(),
                               fit: BoxFit.cover,
                             ),
                           ),
@@ -105,16 +204,24 @@ class ReadScreenState extends State<ReadScreen> {
                                     width: 100.w,
                                     decoration: const BoxDecoration(
                                       color: Color(0xffdadada),
-                                      borderRadius: BorderRadius.all(Radius.circular(8)),
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(8)),
                                     )),
                               ),
-                              Text("Rented from Mr. ${booksOnRent[index]['name']}",
+                              Text(
+                                  "Rented from Mr. ${booksOnRent[index]['name']}",
                                   style: const TextStyle(
-                                      color: const Color(0xff000000), fontWeight: FontWeight.w400, fontStyle: FontStyle.normal, fontSize: 10.0),
+                                      color: Color(0xff000000),
+                                      fontWeight: FontWeight.w400,
+                                      fontStyle: FontStyle.normal,
+                                      fontSize: 10.0),
                                   textAlign: TextAlign.left),
-                              Text("Overdue by 4 days",
-                                  style: const TextStyle(
-                                      color: const Color(0xffe51a1a), fontWeight: FontWeight.w700, fontStyle: FontStyle.normal, fontSize: 10.0),
+                              const Text("Overdue by 5 days",
+                                  style: TextStyle(
+                                      color: Color(0xffe51a1a),
+                                      fontWeight: FontWeight.w700,
+                                      fontStyle: FontStyle.normal,
+                                      fontSize: 10.0),
                                   textAlign: TextAlign.center),
                               SizedBox(
                                 height: 1.h,
@@ -125,9 +232,19 @@ class ReadScreenState extends State<ReadScreen> {
                               SizedBox(
                                 height: 1.h,
                               ),
-                              Button(width: 100, text: "Return with 200 penalty", backgroundColor: yellowPrimary, onClick: ()=>{
-                              GoRouter.of(context).push("/book-details")
-                              })
+                              totalAmount - paidAmount > 0
+                                  ? Button(
+                                      width: 100,
+                                      text:
+                                          "Return with ${totalAmount - paidAmount} penalty",
+                                      backgroundColor: yellowPrimary,
+                                      onClick: () => {
+                                            openCheckout(booksOnRent[index],
+                                                totalAmount - paidAmount)
+                                          })
+                                  : SizedBox(
+                                      height: 0,
+                                    )
                               // SizedBox(
                               //   width: 100.w,
                               //   child: FilledButton(

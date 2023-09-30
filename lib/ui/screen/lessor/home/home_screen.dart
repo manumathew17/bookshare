@@ -72,7 +72,6 @@ class LendBookHomeScreenState extends State<LendBookHomeScreen> {
         RequestCallbacks(
             onSuccess: (response) {
               Map<dynamic, dynamic> jsonMap = json.decode(response);
-              print(jsonMap);
               List booksOnRentTemp = [];
               jsonMap['books'].forEach((item) {
                 item['images'] = json.decode(item['images']);

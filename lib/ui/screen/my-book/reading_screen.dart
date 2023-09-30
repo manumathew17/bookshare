@@ -35,8 +35,8 @@ class ReadingScreenState extends State<ReadingScreen> {
 
   void loadBookOnRent() {
     requestRouter.get(
-        'books-on-rent',
-        {"renter": ''},
+       'returned-books',
+        {"renter": "true"},
         RequestCallbacks(
             onSuccess: (response) {
               print(response);

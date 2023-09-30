@@ -155,8 +155,6 @@ class LocationScreenState extends State<LocationScreen> {
     RequestRouter requestRouter = RequestRouter();
     GeneralSnackBar generalSnackBar = GeneralSnackBar(context);
     final postBody = {"address": address, 'state': state, 'country':country};
-    print(postBody);
-    print(postBody);
     requestRouter.updateProfile(
         postBody,
         RequestCallbacks(

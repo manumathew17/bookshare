@@ -37,7 +37,6 @@ class BookProvider extends ChangeNotifier {
 
   _createBookArrayList(data) {
     List<dynamic> list = data['books']['data'];
-    print(list);
     book.addAll(list.map((item) => Book.fromJson(item)).toList());
     notifyListeners();
   }

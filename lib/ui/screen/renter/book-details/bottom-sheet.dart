@@ -96,7 +96,6 @@ class _MyBottomSheetState extends State<MyBottomSheet> {
               onClick: () {
                 if(_formKey.currentState!.validate()){
                   Navigator.of(context).pop();
-                  print(_dateController.text);
                   widget.onUpdate(_dateController.text);
                 }
 

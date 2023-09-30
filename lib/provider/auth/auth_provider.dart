@@ -72,7 +72,6 @@ class AuthProvider extends ChangeNotifier {
 
       AccountConfig.userDetail = UserDetail.fromJson(jsonMap);
       userDetail = AccountConfig.userDetail;
-      print(userDetail.toJson());
       notifyListeners();
       if (AccountConfig.userDetail.accessToken == "") {
         return false;
@@ -90,7 +89,6 @@ class AuthProvider extends ChangeNotifier {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final jsonMap = userDetail.toJson();
     final jsonString = jsonEncode(jsonMap);
-    Logger.log(jsonString);
     return await prefs.setString(SharedPrefKeys.login.name, jsonString);
   }
 

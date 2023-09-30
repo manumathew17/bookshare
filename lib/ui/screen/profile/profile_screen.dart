@@ -42,7 +42,6 @@ class ProfilePageState extends State<ProfileScreen> {
     final pickedImage = await imagePicker.pickImage(source: ImageSource.gallery);
 
     if (pickedImage != null) {
-      print(pickedImage.path);
       final imageFile = File(pickedImage.path);
       final fileSize = await imageFile.length();
 

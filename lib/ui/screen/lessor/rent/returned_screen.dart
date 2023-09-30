@@ -1,3 +1,7 @@
+import 'dart:convert';
+
+import 'package:bookshare/network/callback.dart';
+import 'package:bookshare/network/request_route.dart';
 import 'package:bookshare/ui/screen/lessor/rent/bottom-sheet/book_rent_history.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -13,12 +17,43 @@ class ReturnedScreen extends StatefulWidget {
 }
 
 class ReturnedScreenState extends State<ReturnedScreen> {
+  List returnedBooks = [];
+  RequestRouter requestRouter = RequestRouter();
+  @override
+  void initState() {
+    super.initState();
+    loadReturnBooks();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  void loadReturnBooks() {
+    requestRouter.get(
+        'returned-books',
+        {"renter": "true"},
+        RequestCallbacks(
+            onSuccess: (response) {
+              Map<dynamic, dynamic> jsonMap = json.decode(response);
+              List returnedBooksTemp = [];
+              jsonMap['books'].forEach((item) {
+                item['images'] = json.decode(item['images']);
+                returnedBooksTemp.add(item);
+              });
+              setState(() {
+                returnedBooks = returnedBooksTemp;
+              });
+            },
+            onError: (error) {}));
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         body: ListView.builder(
             shrinkWrap: true,
-            itemCount: 10,
+            itemCount: returnedBooks.length,
             itemBuilder: (context, index) {
               return Padding(
                 padding: const EdgeInsets.only(top: 0, bottom: 20, left: 15, right: 15),
@@ -50,7 +85,8 @@ class ReturnedScreenState extends State<ReturnedScreen> {
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(14.0),
                               child: Image.network(
-                                'https://images1.penguinrandomhouse.com/cover/9780593500507',
+                                returnedBooks[index]['images']['smallThumbnail']
+                                  .toString(),
                                 fit: BoxFit.cover,
                               ),
                             ),
@@ -64,16 +100,16 @@ class ReturnedScreenState extends State<ReturnedScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
                                 Text(
-                                  "Follow me to ground",
+                                  returnedBooks[index]['title'],
                                   overflow: TextOverflow.ellipsis,
                                   maxLines: 1,
                                   style: heading1Bold,
                                 ),
                                 Text(
-                                  "by sure Rainford",
+                                  returnedBooks[index]['author'],
                                   style: heading1,
                                 ),
-                                Text("Rented to Mr. Ramakrishna Ramanujam",
+                                Text("Rented from Mr. ${returnedBooks[index]['name']}",
                                     style: const TextStyle(
                                         color: const Color(0xff000000), fontWeight: FontWeight.w400, fontStyle: FontStyle.normal, fontSize: 10.0),
                                     textAlign: TextAlign.left),

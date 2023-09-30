@@ -36,7 +36,6 @@ class NewArrivalState extends State<NewArrivalScreen> {
         RequestCallbacks(
             onSuccess: (response) {
               Map<String, dynamic> jsonMap = json.decode(response);
-              print(jsonMap['books']['data']);
               setState(() {
                  newArrBook = jsonMap['books']['data'];
               });

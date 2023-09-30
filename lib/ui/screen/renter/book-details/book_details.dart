@@ -149,7 +149,6 @@ class BookDetailsState extends State<BookDetailsScreen> {
                             builder: (BuildContext context) {
                               return MyBottomSheet(
                                 onUpdate: (date) {
-                                  print(date);
                                   setState(() {
                                     endDate = date;
                                   });
