@@ -54,7 +54,7 @@ class AuthProvider extends ChangeNotifier {
   getUserProfile() {
     requestRouter.getProfile(RequestCallbacks(
         onSuccess: (response) {
-          Map<String, dynamic> jsonMap = response;
+          Map<String, dynamic> jsonMap = jsonDecode(response);
           AccountConfig.userDetail = UserDetail.fromJson(jsonMap);
           storeDetails(AccountConfig.userDetail);
           userDetail = AccountConfig.userDetail;
@@ -72,6 +72,7 @@ class AuthProvider extends ChangeNotifier {
 
       AccountConfig.userDetail = UserDetail.fromJson(jsonMap);
       userDetail = AccountConfig.userDetail;
+      print(userDetail.toJson());
       notifyListeners();
       if (AccountConfig.userDetail.accessToken == "") {
         return false;
@@ -85,6 +86,7 @@ class AuthProvider extends ChangeNotifier {
   }
 
   Future<bool> storeDetails(UserDetail userDetail) async {
+    AccountConfig.JWT_TOKEN = userDetail.accessToken;
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final jsonMap = userDetail.toJson();
     final jsonString = jsonEncode(jsonMap);

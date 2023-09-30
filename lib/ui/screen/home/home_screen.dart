@@ -166,7 +166,6 @@ class HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      drawer: const Drawer(),
       body: Stack(
           fit: StackFit.expand,
           clipBehavior: Clip.antiAliasWithSaveLayer,

@@ -43,8 +43,7 @@ class LendAddBookScreenState extends State<LendAddBookScreen> {
   }
 
   void _scrollListener() {
-    if (_scrollController.position.pixels ==
-        _scrollController.position.maxScrollExtent) {
+    if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
       if (!_bookProvider.isLoading && (_bookProvider.queryParams['page'] == 1 || _bookProvider.queryParams['q'] == "")) {
         _getBook();
       }
@@ -52,12 +51,13 @@ class LendAddBookScreenState extends State<LendAddBookScreen> {
   }
 
   _getBook() {
-    _bookProvider.getAllBook('books',RequestCallbacks(
-        onSuccess: (response) => {},
-        onError: (onError) {
-          _generalSnackBar.showErrorSnackBar(
-              "Something went wrong, Please check the internet");
-        }));
+    _bookProvider.getAllBook(
+        'books',
+        RequestCallbacks(
+            onSuccess: (response) => {},
+            onError: (onError) {
+              _generalSnackBar.showErrorSnackBar("Something went wrong, Please check the internet");
+            }));
   }
 
   @override
@@ -69,8 +69,7 @@ class LendAddBookScreenState extends State<LendAddBookScreen> {
               : Column(
                   children: [
                     Padding(
-                      padding: const EdgeInsets.only(
-                          top: 5, bottom: 0, left: 15, right: 15),
+                      padding: const EdgeInsets.only(top: 5, bottom: 0, left: 15, right: 15),
                       child: TextFormField(
                           onChanged: (value) {
                             _bookProvider.queryParams['q'] = value;
@@ -95,39 +94,28 @@ class LendAddBookScreenState extends State<LendAddBookScreen> {
                           itemCount: bookProvider.book.length,
                           itemBuilder: (context, index) {
                             return Padding(
-                              padding: const EdgeInsets.only(
-                                  top: 10, bottom: 10, left: 15, right: 15),
+                              padding: const EdgeInsets.only(top: 10, bottom: 10, left: 15, right: 15),
                               child: Container(
                                 decoration: generalBoxDecoration,
                                 child: Padding(
                                   padding: const EdgeInsets.all(12.0),
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       SizedBox(
                                         width: 20.w,
                                         height: 25.w,
                                         child: ClipRRect(
-                                          borderRadius:
-                                              BorderRadius.circular(14.0),
+                                          borderRadius: BorderRadius.circular(14.0),
                                           child: Image.network(
-                                            bookProvider.book[index].images
-                                                .smallThumbnail,
+                                            bookProvider.book[index].images.smallThumbnail,
                                             fit: BoxFit.cover,
-                                            loadingBuilder:
-                                                (BuildContext context,
-                                                    Widget child,
-                                                    ImageChunkEvent?
-                                                        loadingProgress) {
+                                            loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
                                               if (loadingProgress == null) {
                                                 return child;
                                               } else {
-                                                return Center(
-                                                    child: ShimmerContainer(
-                                                        width: 20.w,
-                                                        height: 25.w));
+                                                return Center(child: ShimmerContainer(width: 20.w, height: 25.w));
                                               }
                                             },
                                           ),
@@ -138,10 +126,8 @@ class LendAddBookScreenState extends State<LendAddBookScreen> {
                                       ),
                                       Expanded(
                                         child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
+                                          mainAxisAlignment: MainAxisAlignment.start,
+                                          crossAxisAlignment: CrossAxisAlignment.start,
                                           children: <Widget>[
                                             Text(
                                               bookProvider.book[index].title,
@@ -161,27 +147,18 @@ class LendAddBookScreenState extends State<LendAddBookScreen> {
                                             Button(
                                                 width: 100,
                                                 text: "Add Book",
-                                                backgroundColor:
-                                                    lentThemePrimary,
+                                                backgroundColor: lentThemePrimary,
                                                 onClick: () => {
                                                       showModalBottomSheet(
                                                           context: context,
-                                                          isScrollControlled:
-                                                              true,
+                                                          isScrollControlled: true,
                                                           useSafeArea: true,
-                                                          builder: (BuildContext
-                                                              context) {
+                                                          builder: (BuildContext context) {
                                                             return Padding(
-                                                              padding: MediaQuery
-                                                                      .of(context)
-                                                                  .viewInsets,
-                                                              child:
-                                                                  AddBookForRent(
-                                                                book: bookProvider
-                                                                        .book[
-                                                                    index],
-                                                                onUpdate: () =>
-                                                                    {Navigator.pop(context)},
+                                                              padding: MediaQuery.of(context).viewInsets,
+                                                              child: AddBookForRent(
+                                                                book: bookProvider.book[index],
+                                                                onUpdate: () => {Navigator.pop(context)},
                                                               ),
                                                             );
                                                           })

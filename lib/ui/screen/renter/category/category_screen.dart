@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:bookshare/network/callback.dart';
 import 'package:bookshare/network/request_route.dart';
+import 'package:bookshare/utils/Logger.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -60,8 +61,7 @@ class CategoryState extends State<CategoryScreen> {
         title: Text('Categories', style: header.copyWith(color: blackPrimary)),
       ),
       body: GridView.count(
-        crossAxisCount: 4,
-        physics: const NeverScrollableScrollPhysics(), // to disable GridView's scrolling
+        crossAxisCount: 4, // to disable GridView's scrolling
         shrinkWrap: true, // You won't see infinite size error
         children: _buildGridItems(),
       ),
