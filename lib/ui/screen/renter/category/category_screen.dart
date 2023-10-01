@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:bookshare/network/callback.dart';
 import 'package:bookshare/network/request_route.dart';
 import 'package:bookshare/utils/Logger.dart';
+import 'package:bookshare/widget/components/shimmer_general.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -20,29 +21,43 @@ class CategoryScreen extends StatefulWidget {
 }
 
 class CategoryState extends State<CategoryScreen> {
-    RequestRouter requestRouter = RequestRouter();
-     List<GridItem> gridItems = [];
-     @override
+  RequestRouter requestRouter = RequestRouter();
+  bool _isLoading = false;
+  List<GridItem> gridItems = [];
+
+  @override
   void initState() {
     super.initState();
     loadCategories();
   }
+
   void loadCategories() {
+    setState(() {
+      _isLoading = true;
+    });
     requestRouter.get(
         'categories',
         {"per_page": '100'},
         RequestCallbacks(
             onSuccess: (response) {
+              setState(() {
+                _isLoading = false;
+              });
               Map<String, dynamic> jsonMap = json.decode(response);
               jsonMap['categories'].forEach((item) {
-                gridItems.add(GridItem(item['name'], item['icon']));
+                gridItems.add(GridItem(item['name'], item['icon'] ?? ""));
               });
               setState(() {
                 gridItems = gridItems;
               });
             },
-            onError: (error) {}));
+            onError: (error) {
+              setState(() {
+                _isLoading = false;
+              });
+            }));
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -60,7 +75,9 @@ class CategoryState extends State<CategoryScreen> {
         ),
         title: Text('Categories', style: header.copyWith(color: blackPrimary)),
       ),
-      body: GridView.count(
+      body:
+      _isLoading ? const GeneralShimmer() :
+      GridView.count(
         crossAxisCount: 4, // to disable GridView's scrolling
         shrinkWrap: true, // You won't see infinite size error
         children: _buildGridItems(),
@@ -84,11 +101,7 @@ class CategoryState extends State<CategoryScreen> {
             ),
             SizedBox(height: 2.h), // Add spacing between icon and text
             Text(item.text,
-                style: const TextStyle(
-                    color: const Color(0xff909193),
-                    fontWeight: FontWeight.w400,
-                    fontStyle: FontStyle.normal,
-                    fontSize: 10.0),
+                style: const TextStyle(color: const Color(0xff909193), fontWeight: FontWeight.w400, fontStyle: FontStyle.normal, fontSize: 10.0),
                 textAlign: TextAlign.center)
           ],
         ),

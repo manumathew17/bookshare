@@ -11,7 +11,8 @@ import 'package:sizer/sizer.dart';
 import '../../../../theme/app_style.dart';
 import '../../../../theme/colors.dart';
 import '../../../../utils/Logger.dart';
-
+import '../../../../widget/components/not_found.dart';
+import '../../../../widget/components/shimmer_general.dart';
 
 class NewArrivalScreen extends StatefulWidget {
   const NewArrivalScreen({super.key});
@@ -42,17 +43,19 @@ class NewArrivalState extends State<NewArrivalScreen> {
     requestRouter.get(
         'books-for-rent',
         {"per_page": '25', "q": q.toString()},
-        RequestCallbacks(
-            onSuccess: (response) {
-              Map<String, dynamic> jsonMap = json.decode(response);
-              parentList = jsonMap['books']['data'];
-              setState(() {
-                newArrBook = jsonMap['books']['data'];
-                _loading = false;
-                _notFound = newArrBook.isEmpty;
-              });
-            },
-            onError: (error) {}));
+        RequestCallbacks(onSuccess: (response) {
+          Map<String, dynamic> jsonMap = json.decode(response);
+          parentList = jsonMap['books']['data'];
+          setState(() {
+            newArrBook = jsonMap['books']['data'];
+            _loading = false;
+            _notFound = newArrBook.isEmpty;
+          });
+        }, onError: (error) {
+          setState(() {
+            _loading = false;
+          });
+        }));
   }
 
   void search() {
@@ -113,7 +116,7 @@ class NewArrivalState extends State<NewArrivalScreen> {
           _loading
               ? const Expanded(child: GeneralShimmer())
               : _notFound
-                  ? Center(child: const  NotFound(text: "We are sorry\nwe couldn't find the book which you searched"))
+                  ? Center(child: const NotFound(text: "We are sorry\nwe couldn't find the book which you searched"))
                   : Expanded(
                       child: ListView.builder(
                           shrinkWrap: true,

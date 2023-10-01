@@ -31,6 +31,10 @@ class EditProfileState extends State<EditProfile> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController mobileNumberController = TextEditingController();
   final TextEditingController addressController = TextEditingController();
+  final TextEditingController _addressLine1 = TextEditingController();
+  final TextEditingController _addressLine2 = TextEditingController();
+  final TextEditingController _addressLine3 = TextEditingController();
+
 
   final RequestRouter requestRouter = RequestRouter();
   late GeneralSnackBar _generalSnackBar;
@@ -43,12 +47,12 @@ class EditProfileState extends State<EditProfile> {
     nameController.text = widget.userDetail.user.name;
     emailController.text = widget.userDetail.user.email;
     mobileNumberController.text = widget.userDetail.user.mobile;
-    addressController.text =widget.userDetail.user.address;
+   _addressLine1.text =widget.userDetail.user.address;
     _generalSnackBar = GeneralSnackBar(context);
   }
 
-  _updateUserProfile(String name, String email, String mobileNumber, String address) {
-    final requestBody = {"name": name, "email": email, "mobile": mobileNumber, "address": address};
+  _updateUserProfile(String name, String email, String mobileNumber, String address, String state, String country) {
+    final requestBody = {"name": name, "email": email, "mobile": mobileNumber, "address": address, 'state': state, 'country':country};
     Loader.show(context);
     requestRouter.updateProfile(
         requestBody,
@@ -161,16 +165,14 @@ class EditProfileState extends State<EditProfile> {
 
 
                     TextFormField(
-                      controller: addressController,
+                      controller: _addressLine1,
                       keyboardType: TextInputType.multiline,
                       maxLines: null,
                       decoration: InputDecoration(
-                        label: const Text('Address'),
+                        hintText: 'Near HSR Layout',
+                        label: const Text('Address line 1'),
                         hintStyle: header12.copyWith(color: textGrey),
-                        border: const OutlineInputBorder(
-                          borderSide: BorderSide.none,
-                          borderRadius: BorderRadius.all(Radius.circular(14))
-                        ),
+                        border: const OutlineInputBorder(borderSide: BorderSide.none, borderRadius: BorderRadius.all(Radius.circular(14))),
                         filled: true,
                         fillColor: textWhiteGrey,
                       ),
@@ -182,6 +184,49 @@ class EditProfileState extends State<EditProfile> {
                         } else {
                           return null;
                         }
+                      },
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    TextFormField(
+                      controller: _addressLine2,
+                      keyboardType: TextInputType.text,
+                      maxLines: null,
+                      decoration: InputDecoration(
+                        hintText: 'Karnataka',
+                        label: const Text('State'),
+                        hintStyle: header12.copyWith(color: textGrey),
+                        border: const OutlineInputBorder(borderSide: BorderSide.none, borderRadius: BorderRadius.all(Radius.circular(14))),
+                        filled: true,
+                        fillColor: textWhiteGrey,
+                      ),
+                      validator: (value) {
+                        if (value?.isEmpty ?? true) {
+                          return 'Please enter state';
+                        } else {
+                          return null;
+                        }
+                      },
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    TextFormField(
+                      controller: _addressLine3,
+                      decoration: InputDecoration(
+                        label: const Text('Country'),
+                        hintText: 'India',
+                        hintStyle: header12.copyWith(color: textGrey),
+                        border: const OutlineInputBorder(borderSide: BorderSide.none, borderRadius: BorderRadius.all(Radius.circular(14))),
+                        filled: true,
+                        fillColor: textWhiteGrey,
+                      ),
+                      validator: (value) {
+                        if (value?.isEmpty ?? true) {
+                          return 'Enter country';
+                        }
+                        return null;
                       },
                     ),
                   ],
@@ -208,7 +253,7 @@ class EditProfileState extends State<EditProfile> {
                     ),
                     onPressed: () {
                       if (_formKey.currentState?.validate() ?? false) {
-                        _updateUserProfile(nameController.text, emailController.text, mobileNumberController.text, addressController.text);
+                        _updateUserProfile(nameController.text, emailController.text, mobileNumberController.text, _addressLine1.text, _addressLine2.text, _addressLine3.text);
                         //_updateCustomerDetails(nameController.text, mobileController.text);
                       }
                     },

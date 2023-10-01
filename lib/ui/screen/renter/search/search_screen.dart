@@ -57,13 +57,13 @@ class SearchScreenState extends State<SearchScreen> {
         RequestCallbacks(onSuccess: (response) {
           Map<String, dynamic> jsonMap = json.decode(response);
           setState(() {
-            newArrBook = jsonMap['books']['data'];
+            newArrBook.addAll(jsonMap['books']['data']);
             _notFound = newArrBook.isEmpty;
             _loading = false;
           });
         }, onError: (error) {
           setState(() {
-            _notFound = true;
+            //_notFound = true;
             _loading = false;
           });
         }));

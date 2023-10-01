@@ -74,7 +74,7 @@ class CreateAccountScreenState extends State<CreateAccountScreen> {
             // Map<String, dynamic> jsonMap = json.decode(response);
             // AccountConfig.userDetail = UserDetail.fromJson(jsonMap);
             // Provider.of<AuthProvider>(context, listen: false).storeDetails(AccountConfig.userDetail);
-            context.go('/home');
+            context.go('/add-address');
           }, onError: (error) {
             _generalSnackBar.showErrorSnackBar("Error occurred while creating account please check the details");
           }));
