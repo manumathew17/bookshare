@@ -48,6 +48,8 @@ class EditProfileState extends State<EditProfile> {
     emailController.text = widget.userDetail.user.email;
     mobileNumberController.text = widget.userDetail.user.mobile;
    _addressLine1.text =widget.userDetail.user.address;
+   _addressLine2.text = widget.userDetail.user.state;
+   _addressLine3.text = widget.userDetail.user.country;
     _generalSnackBar = GeneralSnackBar(context);
   }
 

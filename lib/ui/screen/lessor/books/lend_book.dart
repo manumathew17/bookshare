@@ -63,7 +63,7 @@ class LendMyBooksState extends State<LendMyBooks> with TickerProviderStateMixin 
         controller: _tabController,
         children: <Widget>[
           LendMyBookScreen(onTabSwitch: () => {_tabController.animateTo(1)}),
-          const LendAddBookScreen()
+          LendAddBookScreen(onTabSwitch: () => {_tabController.animateTo(0)})
         ],
       ),
     );

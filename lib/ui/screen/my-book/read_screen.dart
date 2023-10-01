@@ -155,7 +155,7 @@ class ReadScreenState extends State<ReadScreen> {
           const Expanded(child: GeneralShimmer())
         else
           _notFound
-              ? Center(child: SizedBox(height: 100.h, child: const NotFound(text: "No data found")))
+              ? Center(child: SizedBox(height: 30.h, child: const NotFound(text: "No data found")))
               : Expanded(
                   child: ListView.builder(
                       shrinkWrap: true,

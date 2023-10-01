@@ -352,7 +352,7 @@ class LendBookHomeScreenState extends State<LendBookHomeScreen> {
                             newArrBook.length, // Number of items in the list
                         itemBuilder: (BuildContext context, int index) {
                           Map<String, dynamic> images =
-                              json.decode(newArrBook[index]['images']);
+                              json.decode(newArrBook[index]['images'] ?? '{}');
                           return Padding(
                             padding: const EdgeInsets.only(right: 15.0),
                             child: Container(

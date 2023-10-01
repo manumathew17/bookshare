@@ -15,6 +15,7 @@ class BookProvider extends ChangeNotifier {
 
   getAllBook(String url, RequestCallbacks requestCallbacks) {
     isLoading = true;
+    notifyListeners();
     requestRouter.getBooks(
         url,
         {
@@ -28,9 +29,11 @@ class BookProvider extends ChangeNotifier {
           queryParams['page']++;
           isLoading = false;
           _createBookArrayList(data);
+          notifyListeners();
           requestCallbacks.onSuccess("success");
         }, onError: (error) {
           isLoading = false;
+          notifyListeners();
           requestCallbacks.onError(error);
         }));
   }

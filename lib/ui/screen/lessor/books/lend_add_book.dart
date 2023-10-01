@@ -18,7 +18,9 @@ import '../../../../widget/components/shimmer_utils.dart';
 import 'add_book_for_rent.dart';
 
 class LendAddBookScreen extends StatefulWidget {
-  const LendAddBookScreen({super.key});
+  final VoidCallback onTabSwitch;
+
+  const LendAddBookScreen({super.key, required this.onTabSwitch});
 
   @override
   LendAddBookScreenState createState() => LendAddBookScreenState();
@@ -158,7 +160,10 @@ class LendAddBookScreenState extends State<LendAddBookScreen> {
                                                               padding: MediaQuery.of(context).viewInsets,
                                                               child: AddBookForRent(
                                                                 book: bookProvider.book[index],
-                                                                onUpdate: () => {Navigator.pop(context)},
+                                                                onUpdate: () => {
+                                                                  Navigator.pop(context),
+                                                                  widget.onTabSwitch()
+                                                                },
                                                               ),
                                                             );
                                                           })

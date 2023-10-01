@@ -80,7 +80,7 @@ class BookLendersState extends State<BookLenders> {
   }
 
   void openCheckout(dynamic book) {
-    Navigator.of(context).pop();
+
     DateTime now = DateTime.now();
     String startDate = DateFormat('yyyy-MM-dd').format(now);
     requestRouter.post(

@@ -47,6 +47,7 @@ class AddBookForRentState extends State<AddBookForRent> {
         requestBody,
         RequestCallbacks(onSuccess: (_) {
           widget.onUpdate();
+          _generalSnackBar.showSuccessSnackBar("Book Added Successfully");
         }, onError: (_) {
           _generalSnackBar.showErrorSnackBar("Error happened");
         }));
@@ -111,7 +112,7 @@ class AddBookForRentState extends State<AddBookForRent> {
                   ),
                   TextFormField(
                     controller: lateFineController,
-                    keyboardType: TextInputType.phone,
+                    keyboardType: TextInputType.number,
                     decoration: InputDecoration(
                       label: const Text('Late fine per day'),
                       hintText: '10',

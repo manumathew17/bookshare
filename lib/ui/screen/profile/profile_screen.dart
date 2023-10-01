@@ -34,6 +34,7 @@ class ProfilePageState extends State<ProfileScreen> {
   void initState() {
     _generalSnackBar = GeneralSnackBar(context);
     requestRouter.getProfile(RequestCallbacks(onSuccess: (data) {}, onError: (error) {}));
+    Logger.log(AccountConfig.userDetail.user.profile_image);
     super.initState();
   }
 
@@ -49,7 +50,10 @@ class ProfilePageState extends State<ProfileScreen> {
         requestRouter.uploadImage(
             pickedImage.path,
             RequestCallbacks(
-                onSuccess: (response) {},
+                onSuccess: (response) {
+                  _generalSnackBar.showSuccessSnackBar("Profile photo uploaded");
+                  Provider.of<AuthProvider>(context, listen: false).getUserProfile();
+                },
                 onError: (error) {
                   _generalSnackBar.showErrorSnackBar("Failed to update the image");
                 }));
@@ -59,23 +63,29 @@ class ProfilePageState extends State<ProfileScreen> {
     }
   }
 
+  editUser() {
+    showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        useSafeArea: true,
+        builder: (BuildContext context) {
+          return Padding(
+            padding: MediaQuery.of(context).viewInsets,
+            child: EditProfile(
+              userDetail: Provider.of<AuthProvider>(context, listen: false).userDetail,
+              onUpdate: () => {
+                Provider.of<AuthProvider>(context, listen: false).getUserProfile(),
+                Navigator.pop(context),
+                _generalSnackBar.showSuccessSnackBar("Successfully updated the profile")
+              },
+            ),
+          );
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
-    editUser() {
-      showModalBottomSheet(
-          context: context,
-          isScrollControlled: true,
-          useSafeArea: true,
-          builder: (BuildContext context) {
-            return Padding(
-              padding: MediaQuery.of(context).viewInsets,
-              child: EditProfile(
-                userDetail: Provider.of<AuthProvider>(context, listen: false).userDetail,
-                onUpdate: () => {_generalSnackBar.showSuccessSnackBar("Successfully updated the profile")},
-              ),
-            );
-          });
-    }
+
 
     return Consumer<AuthProvider>(builder: (context, authProvider, child) {
       return Scaffold(
@@ -110,7 +120,7 @@ class ProfilePageState extends State<ProfileScreen> {
                     ),
                   ),
                   EditableImage(
-                    imageUrl: "https://imgv3.fcom/images/gallery/Realistic-Female-Profile-Picture.jpg",
+                    imageUrl: requestRouter.url(AccountConfig.userDetail.user.profile_image),
                     onImageClicked: () => {_pickImage()},
                   ),
                   // SizedBox(

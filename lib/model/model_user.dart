@@ -2,7 +2,7 @@ class UserDetail {
   final String accessToken;
   final String tokenType;
   final int expiresIn;
-  final User user;
+  User user;
 
   UserDetail({
     this.accessToken = "",
@@ -43,9 +43,11 @@ class User {
   final String createdAt;
   final String updatedAt;
   final String deletedAt;
+  final String profile_image;
+  final String state;
+  final String country;
 
-  User({
-    this.id = 0,
+  User({this.id = 0,
     this.name = "",
     this.email = "",
     this.emailVerifiedAt = "",
@@ -57,23 +59,27 @@ class User {
     this.createdAt = "",
     this.updatedAt = "",
     this.deletedAt = "",
-  });
+    this.profile_image = "",
+    this.state = "",
+    this.country = ""});
 
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
-      id: json['id'] ?? 0,
-      name: json['name'] ?? "",
-      email: json['email'] ?? "",
-      emailVerifiedAt: json['email_verified_at'] ?? "",
-      mobile: json['mobile'] ?? "",
-      mobileVerifiedAt: json['mobile_verified_at'] ?? "",
-      status: json['status'] ?? "",
-      communityId: json['community_id'] ?? 0,
-      address: json['address'] ?? "",
-      createdAt: json['created_at'] ?? "",
-      updatedAt: json['updated_at'] ?? "",
-      deletedAt: json['deleted_at'] ?? "",
-    );
+        id: json['id'] ?? 0,
+        name: json['name'] ?? "",
+        email: json['email'] ?? "",
+        emailVerifiedAt: json['email_verified_at'] ?? "",
+        mobile: json['mobile'] ?? "",
+        mobileVerifiedAt: json['mobile_verified_at'] ?? "",
+        status: json['status'] ?? "",
+        communityId: json['community_id'] ?? 0,
+        address: json['address'] ?? "",
+        createdAt: json['created_at'] ?? "",
+        updatedAt: json['updated_at'] ?? "",
+        deletedAt: json['deleted_at'] ?? "",
+        profile_image: json['profile_image'] ?? "",
+        state: json['state'] ?? "",
+        country: json['country'] ?? "");
   }
 
   Map<String, dynamic> toJson() {
@@ -90,6 +96,9 @@ class User {
       'created_at': createdAt,
       'updated_at': updatedAt,
       'deleted_at': deletedAt,
-    };
+      'profile_image': profile_image,
+      'state': state,
+      'country': country,
+  };
   }
 }

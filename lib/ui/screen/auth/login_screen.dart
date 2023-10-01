@@ -68,7 +68,7 @@ class LoginScreenState extends State<LoginScreen> {
             final isLogged = await authProvider.isLoggedIn();
             context.go('/home');
           }, onError: (error) {
-            _generalSnackBar.showErrorSnackBar("Authentication failed");
+            _generalSnackBar.showErrorSnackBar("Please enter valid email and password");
           }));
     }
   }

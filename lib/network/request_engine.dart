@@ -147,7 +147,7 @@ class NetworkRequest {
   }
 
   _showInternetError() {
-    _generalSnackBar.showErrorSnackBar("Something went wrong, internet not available");
+   // _generalSnackBar.showErrorSnackBar("Something went wrong, internet not available");
   }
   url(String url) {
     return WEB_ENDPOINT+url;

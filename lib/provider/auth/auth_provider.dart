@@ -13,6 +13,7 @@ class AuthProvider extends ChangeNotifier {
   bool authExpired = false;
   RequestRouter requestRouter = RequestRouter();
   UserDetail userDetail = AccountConfig.userDetail;
+  User user = AccountConfig.userDetail.user;
 
   Map<String, String?> fieldErrors = {
     'name': null,
@@ -55,9 +56,10 @@ class AuthProvider extends ChangeNotifier {
     requestRouter.getProfile(RequestCallbacks(
         onSuccess: (response) {
           Map<String, dynamic> jsonMap = jsonDecode(response);
-          AccountConfig.userDetail = UserDetail.fromJson(jsonMap);
-          //storeDetails(AccountConfig.userDetail);
-          userDetail = AccountConfig.userDetail;
+          user = User.fromJson(jsonMap);
+          AccountConfig.userDetail.user = user;
+          storeDetails(AccountConfig.userDetail);
+
           //AccountConfig.JWT_TOKEN = AccountConfig.userDetail.accessToken;
           notifyListeners();
         },

@@ -31,10 +31,7 @@ class SplashScreenState extends State<SplashScreen> {
             Expanded(
               child: Align(
                 alignment: Alignment.center,
-                child: SizedBox(
-                  width: 60.w,
-                  child: Image.asset('assets/logo/lively-logo.png'), // Replace with your image asset path
-                ),
+                child: Text("Logo"),
               ),
             ),
             const Padding(

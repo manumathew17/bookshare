@@ -66,7 +66,9 @@ class LendMyBookScreenState extends State<LendMyBookScreen> {
 
     return Consumer<BookProvider>(builder: (context, bookProvider, child) {
       return Scaffold(
-          body: bookProvider.book.isEmpty
+          body:
+          bookProvider.isLoading ? const GeneralShimmer() :
+          bookProvider.book.isEmpty
               ? AddBookHome(onClick: () => {widget.onTabSwitch()})
               : Column(
                   children: [
