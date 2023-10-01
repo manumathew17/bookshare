@@ -59,7 +59,7 @@ class SplashScreenState extends State<SplashScreen> {
     final isLogged = await authProvider.isLoggedIn();
     if (isLogged) {
       if (AccountConfig.userDetail.user.address == "") {
-        context.go('/add-address');
+        context.go('/home');
       } else {
         context.go('/home');
       }

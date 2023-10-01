@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:bookshare/config/account.dart';
 import 'package:bookshare/model/model_user.dart';
 import 'package:bookshare/theme/colors.dart';
+import 'package:bookshare/utils/Logger.dart';
 import 'package:bookshare/widget/essentials/button.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -57,7 +58,11 @@ class LoginScreenState extends State<LoginScreen> {
           requestBody,
           RequestCallbacks(onSuccess: (response) async{
             Map<String, dynamic> jsonMap = json.decode(response);
+
             AccountConfig.userDetail = UserDetail.fromJson(jsonMap);
+
+            Logger.log("kggggggggggggggggggggggg");
+            Logger.log(AccountConfig.userDetail.accessToken);
             Provider.of<AuthProvider>(context, listen: false).storeDetails(AccountConfig.userDetail);
             final authProvider = Provider.of<AuthProvider>(context, listen: false);
             final isLogged = await authProvider.isLoggedIn();

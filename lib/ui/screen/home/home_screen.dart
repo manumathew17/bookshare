@@ -307,7 +307,7 @@ class HomeScreenState extends State<HomeScreen> {
                 ],
               ),
             ),
-
+            booksOnRent.isNotEmpty ?
             Positioned(
               bottom: 0,
               left: 0,
@@ -340,7 +340,7 @@ class HomeScreenState extends State<HomeScreen> {
                             ],
                           ),
                         )),
-                    booksOnRent.isNotEmpty ? 
+
                     Positioned(
                         bottom: 2,
                         left: 5.w,
@@ -389,11 +389,11 @@ class HomeScreenState extends State<HomeScreen> {
                               ],
                             ),
                           ),
-                        ])) : const SizedBox(height: 0,)
+                        ]))
                   ],
                 ),
               ),
-            ),
+            ) : const SizedBox(height: 0,)
 
             // Positioned(
             //   bottom: 0,

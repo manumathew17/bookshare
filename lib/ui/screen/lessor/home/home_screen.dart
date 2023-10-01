@@ -415,6 +415,8 @@ class LendBookHomeScreenState extends State<LendBookHomeScreen> {
             ],
           ),
         ),
+
+        booksOnRent.isNotEmpty ?
         Positioned(
           bottom: 0,
           left: 0,
@@ -447,7 +449,7 @@ class LendBookHomeScreenState extends State<LendBookHomeScreen> {
                         ],
                       ),
                     )),
-                 booksOnRent.isNotEmpty ? 
+
                 Positioned(
                     bottom: 2,
                     left: 5.w,
@@ -496,11 +498,11 @@ class LendBookHomeScreenState extends State<LendBookHomeScreen> {
                           ],
                         ),
                       ),
-                    ])): SizedBox(height: 0)
+                    ]))
               ],
             ),
           ),
-        ),
+        ): SizedBox(height: 0)
       ]),
     );
   }
