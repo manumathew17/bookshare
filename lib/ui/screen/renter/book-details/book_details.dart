@@ -28,7 +28,7 @@ class BookDetailsState extends State<BookDetailsScreen> {
   Widget build(BuildContext context) {
     dynamic book = GoRouterState.of(context).extra;
     bookId = book['id'];
-    Map<String, dynamic> images = json.decode(book['images']);
+    Map<String, dynamic> images = json.decode(book['images'] ?? '{"smallThumbnail": ""}');
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,

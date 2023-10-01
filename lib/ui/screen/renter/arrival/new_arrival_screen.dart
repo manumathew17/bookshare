@@ -122,7 +122,7 @@ class NewArrivalState extends State<NewArrivalScreen> {
                           shrinkWrap: true,
                           itemCount: newArrBook.length,
                           itemBuilder: (context, index) {
-                            Map<String, dynamic> images = json.decode(newArrBook[index]['images']);
+                            Map<String, dynamic> images = json.decode(newArrBook[index]['images'] ?? '{"smallThumbnail": ""}');
                             return Padding(
                               padding: const EdgeInsets.only(top: 0, bottom: 20, left: 15, right: 15),
                               child: Container(

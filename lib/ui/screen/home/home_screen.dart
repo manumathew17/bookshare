@@ -58,11 +58,10 @@ class HomeScreenState extends State<HomeScreen> {
         RequestCallbacks(
             onSuccess: (response) {
               Map<String, dynamic> jsonMap = json.decode(response);
-              setState(() {
-                setState(() {
+              print(jsonMap);
+               setState(() {
                   newArrBook = jsonMap['books']['data'];
                 });
-              });
             },
             onError: (error) {}));
   }
@@ -92,7 +91,7 @@ class HomeScreenState extends State<HomeScreen> {
               Map<dynamic, dynamic> jsonMap = json.decode(response);
               List booksOnRentTemp = [];
               jsonMap['books'].forEach((item) {
-                item['images'] = json.decode(item['images']);
+                item['images'] = json.decode(item['images'] ?? '{"smallThumbnail": ""}');
                 booksOnRentTemp.add(item);
               });
               setState(() {
@@ -252,7 +251,7 @@ class HomeScreenState extends State<HomeScreen> {
                             newArrBook.length, // Number of items in the list
                         itemBuilder: (BuildContext context, int index) {
                           Map<String, dynamic> images =
-                              json.decode(newArrBook[index]['images'] ?? "");
+                              json.decode(newArrBook[index]['images'] ?? '{"smallThumbnail": ""}');
                           return Padding(
                             padding: const EdgeInsets.only(right: 15.0),
                             child: Container(
@@ -308,9 +307,7 @@ class HomeScreenState extends State<HomeScreen> {
               ),
             ),
             booksOnRent.isNotEmpty ? 
-            InkWell(
-              onTap: () => {GoRouter.of(context).push("/my-read")},
-              child: 
+           
             Positioned(
               bottom: 0,
               left: 0,
@@ -343,6 +340,9 @@ class HomeScreenState extends State<HomeScreen> {
                             ],
                           ),
                         )),
+                        InkWell(
+              onTap: () => {GoRouter.of(context).push("/my-read")},
+              child: 
                     Positioned(
                         bottom: 2,
                         left: 5.w,
@@ -391,11 +391,11 @@ class HomeScreenState extends State<HomeScreen> {
                               ],
                             ),
                           ),
-                        ])) 
+                        ]))) 
                   ],
                 ),
               ),
-            )) : SizedBox(height: 0,),
+            ) : SizedBox(height: 0,),
 
             // Positioned(
             //   bottom: 0,

@@ -58,7 +58,7 @@ class AuthProvider extends ChangeNotifier {
           AccountConfig.userDetail = UserDetail.fromJson(jsonMap);
           //storeDetails(AccountConfig.userDetail);
           userDetail = AccountConfig.userDetail;
-          AccountConfig.JWT_TOKEN = AccountConfig.userDetail.accessToken;
+          //AccountConfig.JWT_TOKEN = AccountConfig.userDetail.accessToken;
           notifyListeners();
         },
         onError: (error) {}));

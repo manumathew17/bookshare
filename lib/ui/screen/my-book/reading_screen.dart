@@ -46,11 +46,10 @@ class ReadingScreenState extends State<ReadingScreen> {
         {"renter": "true"},
         RequestCallbacks(
             onSuccess: (response) {
-              print(response);
               Map<dynamic, dynamic> jsonMap = json.decode(response);
               List booksOnRentTemp = [];
               jsonMap['books'].forEach((item) {
-                item['images'] = json.decode(item['images']);
+                item['images'] = json.decode(item['images']?? '{"smallThumbnail": ""}');
                 booksOnRentTemp.add(item);
               });
               setState(() {

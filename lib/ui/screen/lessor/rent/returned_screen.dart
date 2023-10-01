@@ -39,7 +39,7 @@ class ReturnedScreenState extends State<ReturnedScreen> {
               Map<dynamic, dynamic> jsonMap = json.decode(response);
               List returnedBooksTemp = [];
               jsonMap['books'].forEach((item) {
-                item['images'] = json.decode(item['images']);
+                item['images'] = json.decode(item['images'] ?? '{"smallThumbnail": ""}');
                 returnedBooksTemp.add(item);
               });
               setState(() {

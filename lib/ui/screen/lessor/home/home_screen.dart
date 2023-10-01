@@ -74,7 +74,7 @@ class LendBookHomeScreenState extends State<LendBookHomeScreen> {
               Map<dynamic, dynamic> jsonMap = json.decode(response);
               List booksOnRentTemp = [];
               jsonMap['books'].forEach((item) {
-                item['images'] = json.decode(item['images']);
+                item['images'] = json.decode(item['images'] ?? '{"smallThumbnail": ""}');
                 booksOnRentTemp.add(item);
               });
               setState(() {

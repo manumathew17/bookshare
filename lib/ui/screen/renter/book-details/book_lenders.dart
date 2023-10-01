@@ -131,7 +131,6 @@ class BookLendersState extends State<BookLenders> {
         {"book_id": widget.bookId.toString(),"rent_end_date": widget.endDate.toString() },
         RequestCallbacks(
             onSuccess: (response) {
-              print(response);
               Map<String, dynamic> jsonMap = json.decode(response);
               setState(() {
                 bookWonners = jsonMap['woners'];

@@ -14,7 +14,7 @@ class NetworkRequest {
   final List<int> successStatusCodes = [200, 201];
 
   static Map<String, String> getHeaders() {
-    
+    // print({"Authorization": 'Bearer ${AccountConfig.JWT_TOKEN}', "Content-Type": 'application/json'});
     return {"Authorization": 'Bearer ${AccountConfig.JWT_TOKEN}', "Content-Type": 'application/json'};
   }
 
