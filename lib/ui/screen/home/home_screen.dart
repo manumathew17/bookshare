@@ -235,6 +235,13 @@ class HomeScreenState extends State<HomeScreen> {
                             child: Image.network(
                               images['smallThumbnail'].toString(),
                               fit: BoxFit.cover,
+                              errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+                                // Return a default image widget when the network image fails to load
+                                return Image.asset(
+                                  'assets/icons/book-stack.png', // Replace with the path to your default image asset
+                                  fit: BoxFit.contain
+                                );
+                              },
                             ),
                           ),
                         ),
@@ -304,55 +311,63 @@ class HomeScreenState extends State<HomeScreen> {
                               ],
                             ),
                           )),
-                      InkWell(
-                          onTap: () => {GoRouter.of(context).push("/my-read")},
-                          child: Positioned(
-                              bottom: 2,
-                              left: 5,
-                              child: Row(children: [
-                                SizedBox(width: 10),
-                                Container(
-                                  width: 15.w,
-                                  height: 20.w,
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(8.0),
-                                    child: Image.network(
-                                      booksOnRent[0]['images']['smallThumbnail'].toString(),
-                                      fit: BoxFit.cover,
+                      Positioned(
+                          bottom: 2,
+                          left: 5,
+                          child: GestureDetector(
+                            onTap: () => {GoRouter.of(context).push("/my-read")},
+                            child: Row(children: [
+                              SizedBox(width: 10),
+                              Container(
+                                width: 15.w,
+                                height: 20.w,
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                  child: Image.network(
+                                    booksOnRent[0]['images']['smallThumbnail'].toString(),
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+                                      // Return a default image widget when the network image fails to load
+                                      return Image.asset(
+                                          'assets/icons/book-stack.png', // Replace with the path to your default image asset
+                                          fit: BoxFit.contain
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                width: 5.w,
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    SizedBox(
+                                      height: 2.h,
                                     ),
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: 5.w,
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                    children: [
-                                      SizedBox(
-                                        height: 2.h,
-                                      ),
-                                      Text("Rented from Mr. ${booksOnRent[0]['name']}",
-                                          style: const TextStyle(
-                                              color: Color(0xffffffff), fontWeight: FontWeight.w400, fontStyle: FontStyle.normal, fontSize: 10.0),
-                                          textAlign: TextAlign.center),
-                                      Text("Return by ${getReturnDate(booksOnRent[0])}",
-                                          style: const TextStyle(
-                                              color: Color(0xffffffff), fontWeight: FontWeight.w700, fontStyle: FontStyle.normal, fontSize: 12.0),
-                                          textAlign: TextAlign.start),
-                                      SizedBox(
-                                        width: 50.w,
-                                        child: LinearProgressIndicator(
+                                    Text("Rented from Mr. ${booksOnRent[0]['name']}",
+                                        style: const TextStyle(
+                                            color: Color(0xffffffff), fontWeight: FontWeight.w400, fontStyle: FontStyle.normal, fontSize: 10.0),
+                                        textAlign: TextAlign.center),
+                                    Text("Return by ${getReturnDate(booksOnRent[0])}",
+                                        style: const TextStyle(
+                                            color: Color(0xffffffff), fontWeight: FontWeight.w700, fontStyle: FontStyle.normal, fontSize: 12.0),
+                                        textAlign: TextAlign.start),
+                                    SizedBox(
+                                      width: 50.w,
+                                      child: LinearProgressIndicator(
 
-                                          value: getRemaningValue(booksOnRent[0]),
-                                        ),
-                                      )
-                                    ],
-                                  ),
+                                        value: getRemaningValue(booksOnRent[0]),
+                                      ),
+                                    )
+                                  ],
                                 ),
-                              ])))
+                              ),
+                            ]),
+                          ))
                     ],
                   ),
                 ),

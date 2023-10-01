@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:bookshare/widget/components/loader.dart';
 import 'package:bookshare/widget/components/not_found.dart';
+import 'package:bookshare/widget/components/shimmer_container.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -14,6 +15,7 @@ import '../../../../../widget/tag/general_tag.dart';
 import '../../../../network/callback.dart';
 import '../../../../network/request_route.dart';
 import '../../../../widget/components/shimmer_general.dart';
+import '../../../../widget/components/shimmer_loader.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -112,17 +114,15 @@ class SearchScreenState extends State<SearchScreen> {
                       onTap: () => {loadBooks()},
                     ))),
           ),
-          if (_loading)
-            const Expanded(child: GeneralShimmer())
-          else
-            _notFound
-                ? Center(child: SizedBox(height: 30.h, child: const NotFound(text: "We are sorry\nwe couldn't find the book which you searched")))
-                : Expanded(
-                    child: ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: newArrBook.length,
-                        controller: _scrollController,
-                        itemBuilder: (context, index) {
+          _notFound
+              ? Center(child: SizedBox(height: 30.h, child: const NotFound(text: "We are sorry\nwe couldn't find the book which you searched")))
+              : Expanded(
+                  child: ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: newArrBook.length + 1,
+                      controller: _scrollController,
+                      itemBuilder: (context, index) {
+                        if (index < newArrBook.length) {
                           Map<String, dynamic> images = json.decode(newArrBook[index]['images'] ?? '{"smallThumbnail": ""}');
                           return Padding(
                             padding: const EdgeInsets.only(top: 0, bottom: 20, left: 15, right: 15),
@@ -142,6 +142,13 @@ class SearchScreenState extends State<SearchScreen> {
                                         child: Image.network(
                                           images['smallThumbnail'].toString(),
                                           fit: BoxFit.cover,
+                                          errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+                                            // Return a default image widget when the network image fails to load
+                                            return Image.asset(
+                                                'assets/icons/book-stack.png', // Replace with the path to your default image asset
+                                                fit: BoxFit.contain
+                                            );
+                                          },
                                         ),
                                       ),
                                     ),
@@ -209,7 +216,12 @@ class SearchScreenState extends State<SearchScreen> {
                               ),
                             ),
                           );
-                        }))
+                        } else {
+                          return _loading
+                              ? const Padding(padding: EdgeInsets.only(top: 0, bottom: 20, left: 15, right: 15), child: ShimmerLoader())
+                              : Container();
+                        }
+                      }))
         ],
       ),
     );

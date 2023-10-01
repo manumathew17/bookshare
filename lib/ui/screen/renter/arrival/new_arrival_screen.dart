@@ -141,6 +141,13 @@ class NewArrivalState extends State<NewArrivalScreen> {
                                           child: Image.network(
                                             images['smallThumbnail'].toString(),
                                             fit: BoxFit.cover,
+                                            errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+                                              // Return a default image widget when the network image fails to load
+                                              return Image.asset(
+                                                  'assets/icons/book-stack.png', // Replace with the path to your default image asset
+                                                  fit: BoxFit.contain
+                                              );
+                                            },
                                           ),
                                         ),
                                       ),
