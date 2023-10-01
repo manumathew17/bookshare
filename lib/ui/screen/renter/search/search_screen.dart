@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:bookshare/widget/components/loader.dart';
 import 'package:bookshare/widget/components/not_found.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +11,9 @@ import '../../../../../theme/app_style.dart';
 import '../../../../../theme/colors.dart';
 import '../../../../../widget/essentials/button.dart';
 import '../../../../../widget/tag/general_tag.dart';
+import '../../../../network/callback.dart';
+import '../../../../network/request_route.dart';
+import '../../../../widget/components/shimmer_general.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -18,11 +24,49 @@ class SearchScreen extends StatefulWidget {
 
 class SearchScreenState extends State<SearchScreen> {
   bool _notFound = false;
+  bool _loading = false;
+  int page = 1;
+  String q = "";
+  RequestRouter requestRouter = RequestRouter();
+  List newArrBook = [];
+  final ScrollController _scrollController = ScrollController();
 
-  serach() {
+  @override
+  void initState() {
+    super.initState();
+    loadBooks();
+    _scrollController.addListener(_scrollListener);
+  }
+
+  void _scrollListener() {
+    if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
+      if (!_loading) {
+        page++;
+        loadBooks();
+      }
+    }
+  }
+
+  void loadBooks() {
     setState(() {
-      _notFound = true;
+      _loading = true;
     });
+    requestRouter.get(
+        'books-for-rent',
+        {"per_page": '100', "page": '$page', "q": q},
+        RequestCallbacks(onSuccess: (response) {
+          Map<String, dynamic> jsonMap = json.decode(response);
+          setState(() {
+            newArrBook = jsonMap['books']['data'];
+            _notFound = newArrBook.isEmpty;
+            _loading = false;
+          });
+        }, onError: (error) {
+          setState(() {
+            _notFound = true;
+            _loading = false;
+          });
+        }));
   }
 
   @override
@@ -49,109 +93,123 @@ class SearchScreenState extends State<SearchScreen> {
           Padding(
             padding: const EdgeInsets.only(top: 5, bottom: 0, left: 15, right: 15),
             child: TextFormField(
+                onChanged: (value) {
+                  setState(() {
+                    q = value;
+                  });
+
+                  if (value.length > 4 || value.isEmpty) {
+                    page = 1;
+                    loadBooks();
+                  }
+                },
                 keyboardType: TextInputType.name,
                 decoration: inputDecoration.copyWith(
                     label: const Text('Search...'),
+                    hintText: "Please search above 4 character",
                     suffixIcon: GestureDetector(
                       child: const Icon(Icons.search_rounded),
-                      onTap: () => {serach()},
+                      onTap: () => {loadBooks()},
                     ))),
           ),
-          _notFound
-              ?  Center(child: SizedBox(
-            height: 30.h,
-              child: const NotFound(text: "We are sorry\nwe couldn't find the book which you searched")))
-              : Expanded(
-                  child: ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: 10,
-                      itemBuilder: (context, index) {
-                        return Padding(
-                          padding: const EdgeInsets.only(top: 0, bottom: 20, left: 15, right: 15),
-                          child: Container(
-                            decoration: generalBoxDecoration,
-                            child: Padding(
-                              padding: const EdgeInsets.all(12.0),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  SizedBox(
-                                    width: 20.w,
-                                    height: 25.w,
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(14.0),
-                                      child: Image.network(
-                                        'https://images1.penguinrandomhouse.com/cover/9780593500507',
-                                        fit: BoxFit.cover,
+          if (_loading)
+            const Expanded(child: GeneralShimmer())
+          else
+            _notFound
+                ? Center(child: SizedBox(height: 30.h, child: const NotFound(text: "We are sorry\nwe couldn't find the book which you searched")))
+                : Expanded(
+                    child: ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: newArrBook.length,
+                        controller: _scrollController,
+                        itemBuilder: (context, index) {
+                          Map<String, dynamic> images = json.decode(newArrBook[index]['images']);
+                          return Padding(
+                            padding: const EdgeInsets.only(top: 0, bottom: 20, left: 15, right: 15),
+                            child: Container(
+                              decoration: generalBoxDecoration,
+                              child: Padding(
+                                padding: const EdgeInsets.all(12.0),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    SizedBox(
+                                      width: 20.w,
+                                      height: 25.w,
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(14.0),
+                                        child: Image.network(
+                                          images['smallThumbnail'].toString(),
+                                          fit: BoxFit.cover,
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                  SizedBox(
-                                    width: 5.w,
-                                  ),
-                                  Expanded(
-                                    child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.start,
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: <Widget>[
-                                        Text(
-                                          "Follow me to ground",
-                                          overflow: TextOverflow.ellipsis,
-                                          maxLines: 1,
-                                          style: heading1,
-                                        ),
-                                        Text(
-                                          "by sure Rainford",
-                                          style: heading1Bold,
-                                        ),
-                                        SizedBox(
-                                          height: 7,
-                                        ),
-                                        Row(
-                                          mainAxisAlignment: MainAxisAlignment.start,
-                                          children: [
-                                            Tag(text: "68"),
-                                            SizedBox(
-                                              width: 2.w,
-                                            ),
-                                            Text("times rented", style: infoText, textAlign: TextAlign.center),
-                                          ],
-                                        ),
-                                        SizedBox(
-                                          height: 1.h,
-                                        ),
-
-                                        Button(
-                                            width: 100,
-                                            text: "Rent",
-                                            backgroundColor: yellowPrimary,
-                                            onClick: () => {GoRouter.of(context).push("/book-details")})
-                                        // SizedBox(
-                                        //   width: 100.w,
-                                        //
-                                        //   child: FilledButton(
-                                        //     style: ButtonStyle(
-                                        //       backgroundColor: MaterialStateProperty.all<Color>(yellowPrimary), // Set the background color here
-                                        //     ),
-                                        //     onPressed: () {
-                                        //       GoRouter.of(context).push("/book-details");
-                                        //     },
-                                        //     child: const Text(
-                                        //       "Rent",
-                                        //       style: buttonText,
-                                        //     ),
-                                        //   ),
-                                        // )
-                                      ],
+                                    SizedBox(
+                                      width: 5.w,
                                     ),
-                                  ),
-                                ],
+                                    Expanded(
+                                      child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.start,
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: <Widget>[
+                                          Text(
+                                            newArrBook[index]['title'],
+                                            overflow: TextOverflow.ellipsis,
+                                            maxLines: 1,
+                                            style: heading1,
+                                          ),
+                                          Text(
+                                            "by ${newArrBook[index]['author']}",
+                                            style: heading1Bold,
+                                          ),
+                                          const SizedBox(
+                                            height: 7,
+                                          ),
+                                          Row(
+                                            mainAxisAlignment: MainAxisAlignment.start,
+                                            children: [
+                                              const Tag(text: "68"),
+                                              SizedBox(
+                                                width: 2.w,
+                                              ),
+                                              const Text("times rented", style: infoText, textAlign: TextAlign.center),
+                                            ],
+                                          ),
+                                          SizedBox(
+                                            height: 1.h,
+                                          ),
+
+                                          Button(
+                                              width: 100,
+                                              text: "Rent",
+                                              backgroundColor: yellowPrimary,
+                                              onClick: () => {GoRouter.of(context).push("/book-details", extra: newArrBook[index])})
+                                          // SizedBox(
+                                          //   width: 100.w,
+                                          //
+                                          //   child: FilledButton(
+                                          //     style: ButtonStyle(
+                                          //       backgroundColor: MaterialStateProperty.all<Color>(yellowPrimary), // Set the background color here
+                                          //     ),
+                                          //     onPressed: () {
+                                          //       GoRouter.of(context).push("/book-details");
+                                          //     },
+                                          //     child: const Text(
+                                          //       "Rent",
+                                          //       style: buttonText,
+                                          //     ),
+                                          //   ),
+                                          // )
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
-                          ),
-                        );
-                      }))
+                          );
+                        }))
         ],
       ),
     );

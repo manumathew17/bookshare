@@ -71,9 +71,9 @@ class CreateAccountScreenState extends State<CreateAccountScreen> {
           RequestCallbacks(onSuccess: (response) {
 
             //_generalSnackBar.showSuccessSnackBar("Account created successfully");
-            Map<String, dynamic> jsonMap = json.decode(response);
-            AccountConfig.userDetail = UserDetail.fromJson(jsonMap);
-            Provider.of<AuthProvider>(context, listen: false).storeDetails(AccountConfig.userDetail);
+            // Map<String, dynamic> jsonMap = json.decode(response);
+            // AccountConfig.userDetail = UserDetail.fromJson(jsonMap);
+            // Provider.of<AuthProvider>(context, listen: false).storeDetails(AccountConfig.userDetail);
             context.go('/home');
           }, onError: (error) {
             _generalSnackBar.showErrorSnackBar("Error occurred while creating account please check the details");

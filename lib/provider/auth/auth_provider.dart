@@ -35,7 +35,7 @@ class AuthProvider extends ChangeNotifier {
           notifyListeners();
           requestCallbacks.onSuccess(response);
         }, onError: (error) {
-          Map<String, dynamic> responseMap = jsonDecode(error);
+          Map<String, dynamic> responseMap = jsonDecode(jsonDecode(error));
           try {
             responseMap.forEach((key, value) {
               if (fieldErrors.containsKey(key)) {
@@ -56,7 +56,7 @@ class AuthProvider extends ChangeNotifier {
         onSuccess: (response) {
           Map<String, dynamic> jsonMap = jsonDecode(response);
           AccountConfig.userDetail = UserDetail.fromJson(jsonMap);
-          storeDetails(AccountConfig.userDetail);
+          //storeDetails(AccountConfig.userDetail);
           userDetail = AccountConfig.userDetail;
           AccountConfig.JWT_TOKEN = AccountConfig.userDetail.accessToken;
           notifyListeners();
@@ -67,6 +67,7 @@ class AuthProvider extends ChangeNotifier {
   Future<bool> isLoggedIn() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final userString = prefs.getString(SharedPrefKeys.login.name);
+    Logger.log(userString);
     if (userString != null) {
       final Map<String, dynamic> jsonMap = json.decode(userString);
 
