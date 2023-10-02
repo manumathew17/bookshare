@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:bookshare/network/callback.dart';
 import 'package:bookshare/network/request_route.dart';
 import 'package:bookshare/ui/screen/success/success-screen.dart';
+import 'package:bookshare/widget/components/snackbar.dart';
 import 'package:bookshare/widget/essentials/button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -31,11 +32,13 @@ class ReadScreenState extends State<ReadScreen> {
   late Razorpay _razorpay;
   dynamic order;
   RequestRouter requestRouter = RequestRouter();
+  late GeneralSnackBar _generalSnackBar;
 
   @override
   void initState() {
     super.initState();
     loadBookOnRent();
+    _generalSnackBar = GeneralSnackBar(context);
     _razorpay = Razorpay();
     _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
     _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
@@ -71,6 +74,23 @@ class ReadScreenState extends State<ReadScreen> {
             _loading = false;
           });
         }));
+  }
+
+  double getRemaningValue(books) {
+    DateTime startDate = DateTime.parse(books['rent_start_date']);
+    DateTime endDate = DateTime.parse(books['rent_end_date']);
+    DateTime now = DateTime.now();
+    Duration diff1 = endDate.difference(startDate);
+    Duration diff2 = endDate.difference(now);
+    if (diff1.inDays - diff2.inDays > 0) {
+      return (diff1.inDays - diff2.inDays) / diff1.inDays;
+    }
+    return 0;
+  }
+
+  String getReturnDate(books) {
+    DateTime inputDate = DateFormat("yyyy-MM-dd").parse(books['rent_end_date']);
+    return DateFormat("d'th' MMMM yyyy").format(inputDate);
   }
 
   Future<void> _handlePaymentSuccess(PaymentSuccessResponse response) async {
@@ -114,11 +134,10 @@ class ReadScreenState extends State<ReadScreen> {
               setState(() {
                 order = jsonMap;
               });
-              if (order['payment'] == 'false') {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const SuccessScreen()),
-                );
+              //TODO api call is curroct or not for non due return
+              if (order['payment'] == false) {
+                _generalSnackBar.showSuccessSnackBar("Book Returned Successfully");
+                loadBookOnRent();
                 return;
               }
               var options = {
@@ -215,7 +234,7 @@ class ReadScreenState extends State<ReadScreen> {
                                             style: const TextStyle(
                                                 color: Color(0xff000000), fontWeight: FontWeight.w400, fontStyle: FontStyle.normal, fontSize: 10.0),
                                             textAlign: TextAlign.left),
-                                        const Text("Overdue by 5 days",
+                                        Text("Return by ${getReturnDate(booksOnRent[index])}",
                                             style: TextStyle(
                                                 color: Color(0xffe51a1a), fontWeight: FontWeight.w700, fontStyle: FontStyle.normal, fontSize: 10.0),
                                             textAlign: TextAlign.center),
@@ -223,7 +242,8 @@ class ReadScreenState extends State<ReadScreen> {
                                           height: 1.h,
                                         ),
                                         LinearProgressIndicator(
-                                          value: 0.5,
+                                          backgroundColor: Colors.grey,
+                                          value: getRemaningValue(booksOnRent[index]),
                                         ),
                                         SizedBox(
                                           height: 1.h,
@@ -234,9 +254,11 @@ class ReadScreenState extends State<ReadScreen> {
                                                 text: "Return with ${totalAmount - paidAmount} penalty",
                                                 backgroundColor: yellowPrimary,
                                                 onClick: () => {openCheckout(booksOnRent[index], totalAmount - paidAmount)})
-                                            : SizedBox(
-                                                height: 0,
-                                              )
+                                            : Button(
+                                            width: 100,
+                                            text: "Return",
+                                            backgroundColor: yellowPrimary,
+                                            onClick: () => {openCheckout(booksOnRent[index], 0)})
                                         // SizedBox(
                                         //   width: 100.w,
                                         //   child: FilledButton(

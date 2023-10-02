@@ -13,6 +13,7 @@ import '../../../../provider/book/my_book_provider.dart';
 import '../../../../theme/app_style.dart';
 import '../../../../widget/components/home_addBook.dart';
 import '../../../../widget/components/shimmer_container.dart';
+import '../../../../widget/components/shimmer_loader.dart';
 import '../../../../widget/tag/general_tag.dart';
 
 class LendMyBookScreen extends StatefulWidget {
@@ -68,7 +69,7 @@ class LendMyBookScreenState extends State<LendMyBookScreen> {
     return Consumer<MyBookProvider>(builder: (context, bookProvider, child) {
       return Scaffold(
           body:
-          bookProvider.isLoading ? const GeneralShimmer() :
+          !bookProvider.isLoading &&
           bookProvider.book.isEmpty
               ? AddBookHome(onClick: () => {widget.onTabSwitch()})
               : Column(
@@ -77,78 +78,91 @@ class LendMyBookScreenState extends State<LendMyBookScreen> {
                       child: ListView.builder(
                           shrinkWrap: true,
                           controller: _scrollController,
-                          itemCount: bookProvider.book.length,
+                          itemCount: bookProvider.book.length +1,
                           itemBuilder: (context, index) {
-                            return Padding(
-                              padding: const EdgeInsets.only(
-                                  top: 10, bottom: 10, left: 15, right: 15),
-                              child: Container(
-                                decoration: generalBoxDecoration,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(12.0),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      SizedBox(
-                                        width: 20.w,
-                                        height: 25.w,
-                                        child: ClipRRect(
-                                          borderRadius:
-                                              BorderRadius.circular(14.0),
-                                          child: Image.network(
-                                            bookProvider.book[index].images
-                                                .smallThumbnail,
-                                            fit: BoxFit.cover,
-                                            loadingBuilder:
-                                                (BuildContext context,
-                                                    Widget child,
-                                                    ImageChunkEvent?
-                                                        loadingProgress) {
-                                              if (loadingProgress == null) {
-                                                return child;
-                                              } else {
-                                                return Center(
-                                                    child: ShimmerContainer(
-                                                        width: 20.w,
-                                                        height: 25.w));
-                                              }
-                                            },
+                            if(index < bookProvider.book.length){
+                              return Padding(
+                                padding: const EdgeInsets.only(
+                                    top: 10, bottom: 10, left: 15, right: 15),
+                                child: Container(
+                                  decoration: generalBoxDecoration,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(12.0),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                      CrossAxisAlignment.start,
+                                      children: [
+                                        SizedBox(
+                                          width: 20.w,
+                                          height: 25.w,
+                                          child: ClipRRect(
+                                            borderRadius:
+                                            BorderRadius.circular(14.0),
+                                            child: Image.network(
+                                              bookProvider.book[index].images
+                                                  .smallThumbnail,
+                                              fit: BoxFit.cover,
+                                              errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+                                                // Return a default image widget when the network image fails to load
+                                                return Image.asset('assets/icons/book-stack.png', // Replace with the path to your default image asset
+                                                    fit: BoxFit.contain);
+                                              },
+                                              loadingBuilder:
+                                                  (BuildContext context,
+                                                  Widget child,
+                                                  ImageChunkEvent?
+                                                  loadingProgress) {
+                                                if (loadingProgress == null) {
+                                                  return child;
+                                                } else {
+                                                  return Center(
+                                                      child: ShimmerContainer(
+                                                          width: 20.w,
+                                                          height: 25.w));
+                                                }
+                                              },
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                      SizedBox(
-                                        width: 5.w,
-                                      ),
-                                      Expanded(
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: <Widget>[
-                                            Text(
-                                              bookProvider.book[index].title,
-                                              overflow: TextOverflow.ellipsis,
-                                              maxLines: 1,
-                                              style: heading1Bold,
-                                            ),
-                                            Text(
-                                              "by, ${bookProvider.book[index].author}",
-                                              style: heading1,
-                                            ),
-                                            SizedBox(
-                                              height: 3.h,
-                                            ),
-                                          ],
+                                        SizedBox(
+                                          width: 5.w,
                                         ),
-                                      ),
-                                    ],
+                                        Expanded(
+                                          child: Column(
+                                            mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                            crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                            children: <Widget>[
+                                              Text(
+                                                bookProvider.book[index].title,
+                                                overflow: TextOverflow.ellipsis,
+                                                maxLines: 1,
+                                                style: heading1Bold,
+                                              ),
+                                              Text(
+                                                "by, ${bookProvider.book[index].author}",
+                                                style: heading1,
+                                              ),
+                                              SizedBox(
+                                                height: 3.h,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
-                              ),
-                            );
+                              );
+                            }
+                            else {
+                              return bookProvider.isLoading
+                                  ? const Padding(padding: EdgeInsets.only(top: 0, bottom: 20, left: 15, right: 15), child: ShimmerLoader())
+                                  : Container();
+                            }
+
                           }),
                     ),
                   ],
