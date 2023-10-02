@@ -5,6 +5,7 @@ import 'package:bookshare/network/callback.dart';
 import 'package:bookshare/network/request_route.dart';
 import 'package:bookshare/provider/auth/auth_provider.dart';
 import 'package:bookshare/theme/colors.dart';
+import 'package:bookshare/utils/Logger.dart';
 import 'package:flashy_tab_bar2/flashy_tab_bar2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -24,7 +25,7 @@ class HomeScreen extends StatefulWidget {
   HomeScreenState createState() => HomeScreenState();
 }
 
-class HomeScreenState extends State<HomeScreen> {
+class HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   int _selectedIndex = 0;
   DateTime today = DateTime.now();
   List newArrBook = [];
@@ -38,11 +39,32 @@ class HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+    loadData();
+    authProvider = Provider.of<AuthProvider>(context, listen: false);
+    WidgetsBinding.instance.addObserver(this);
+    //authProvider.getUserProfile();
+  }
+
+  loadData() {
     loadNewArrivals();
     loadCategories();
     loadBookOnRent();
-    authProvider = Provider.of<AuthProvider>(context, listen: false);
-    //authProvider.getUserProfile();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    Logger.log(state.name);
+    if (state == AppLifecycleState.resumed) {
+      loadNewArrivals();
+      loadCategories();
+      loadBookOnRent();
+    }
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
   }
 
   void loadNewArrivals() {
@@ -66,6 +88,7 @@ class HomeScreenState extends State<HomeScreen> {
         {"per_page": '8'},
         RequestCallbacks(
             onSuccess: (response) {
+              gridItems.clear();
               Map<String, dynamic> jsonMap = json.decode(response);
               jsonMap['categories'].forEach((item) {
                 gridItems.add(GridItem(item['name'], item['icon']));
@@ -127,7 +150,7 @@ class HomeScreenState extends State<HomeScreen> {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: GestureDetector(
-              onTap: () => {GoRouter.of(context).push("/profile")},
+              onTap: () => {GoRouter.of(context).push("/profile").then((value) => loadData())},
               child: SizedBox(
                 width: 5.w,
                 height: 5.w,
@@ -207,7 +230,7 @@ class HomeScreenState extends State<HomeScreen> {
                       textAlign: TextAlign.center),
                   GestureDetector(
                     onTap: () {
-                      GoRouter.of(context).push("/new-arrival");
+                      GoRouter.of(context).push("/new-arrival").then((value)=> {loadData()});
                     },
                     child: const Text("View More >",
                         style: TextStyle(color: Color(0xfff5c02d), fontWeight: FontWeight.w700, fontStyle: FontStyle.normal, fontSize: 10.0),
@@ -237,10 +260,8 @@ class HomeScreenState extends State<HomeScreen> {
                               fit: BoxFit.cover,
                               errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
                                 // Return a default image widget when the network image fails to load
-                                return Image.asset(
-                                  'assets/icons/book-stack.png', // Replace with the path to your default image asset
-                                  fit: BoxFit.contain
-                                );
+                                return Image.asset('assets/icons/book-stack.png', // Replace with the path to your default image asset
+                                    fit: BoxFit.contain);
                               },
                             ),
                           ),
@@ -261,7 +282,7 @@ class HomeScreenState extends State<HomeScreen> {
                       textAlign: TextAlign.center),
                   GestureDetector(
                     onTap: () {
-                      GoRouter.of(context).push("/category");
+                      GoRouter.of(context).push("/category").then((value) => loadData());
                     },
                     child: Text("View More >",
                         style:
@@ -315,7 +336,7 @@ class HomeScreenState extends State<HomeScreen> {
                           bottom: 2,
                           left: 5,
                           child: GestureDetector(
-                            onTap: () => {GoRouter.of(context).push("/my-read")},
+                            onTap: () => {GoRouter.of(context).push("/my-read").then((value) => loadData())},
                             child: Row(children: [
                               SizedBox(width: 10),
                               Container(
@@ -328,10 +349,8 @@ class HomeScreenState extends State<HomeScreen> {
                                     fit: BoxFit.cover,
                                     errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
                                       // Return a default image widget when the network image fails to load
-                                      return Image.asset(
-                                          'assets/icons/book-stack.png', // Replace with the path to your default image asset
-                                          fit: BoxFit.contain
-                                      );
+                                      return Image.asset('assets/icons/book-stack.png', // Replace with the path to your default image asset
+                                          fit: BoxFit.contain);
                                     },
                                   ),
                                 ),
@@ -359,7 +378,6 @@ class HomeScreenState extends State<HomeScreen> {
                                     SizedBox(
                                       width: 50.w,
                                       child: LinearProgressIndicator(
-
                                         value: getRemaningValue(booksOnRent[0]),
                                       ),
                                     )
@@ -529,13 +547,13 @@ class HomeScreenState extends State<HomeScreen> {
         onItemSelected: (index) {
           switch (index) {
             case 1:
-              GoRouter.of(context).push("/search");
+              GoRouter.of(context).push("/search").then((value) => loadData());
               break;
             case 2:
-              GoRouter.of(context).push("/my-read");
+              GoRouter.of(context).push("/my-read").then((value) => loadData());
               break;
             case 3:
-              GoRouter.of(context).push("/lend-home");
+              GoRouter.of(context).push("/lend-home").then((value) => loadData());
               break;
           }
         },
