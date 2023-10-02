@@ -34,7 +34,7 @@ final route = GoRouter(navigatorKey: navigatorKey, routes: [
   ),
   GoRoute(
     path: '/new-arrival',
-    builder: (context, state) => const NewArrivalScreen(),
+    builder: (context, state) => const NewArrivalScreen(category: "",),
   ),
   GoRoute(
     path: '/category',

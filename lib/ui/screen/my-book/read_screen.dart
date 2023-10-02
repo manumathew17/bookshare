@@ -6,6 +6,7 @@ import 'package:bookshare/ui/screen/success/success-screen.dart';
 import 'package:bookshare/widget/essentials/button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:bookshare/helpers/helper.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
@@ -215,8 +216,8 @@ class ReadScreenState extends State<ReadScreen> {
                                             style: const TextStyle(
                                                 color: Color(0xff000000), fontWeight: FontWeight.w400, fontStyle: FontStyle.normal, fontSize: 10.0),
                                             textAlign: TextAlign.left),
-                                        const Text("Overdue by 5 days",
-                                            style: TextStyle(
+                                         Text("Overdue by ${Helper.showDateNo(booksOnRent[index])} days",
+                                            style: const TextStyle(
                                                 color: Color(0xffe51a1a), fontWeight: FontWeight.w700, fontStyle: FontStyle.normal, fontSize: 10.0),
                                             textAlign: TextAlign.center),
                                         SizedBox(

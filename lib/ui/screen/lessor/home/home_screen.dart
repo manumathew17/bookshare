@@ -15,6 +15,7 @@ import '../../../../theme/app_style.dart';
 import '../../../../theme/colors.dart';
 import '../../../../widget/components/home_addBook.dart';
 import '../../../../widget/components/shimmer_container.dart';
+import 'package:bookshare/helpers/helper.dart';
 
 class LendBookHomeScreen extends StatefulWidget {
   const LendBookHomeScreen({super.key});
@@ -29,7 +30,12 @@ class LendBookHomeScreenState extends State<LendBookHomeScreen> {
   RequestRouter requestRouter = RequestRouter();
   late AuthProvider authProvider;
   List<GridItem> gridItems = [];
-  dynamic dash = {"total_count":'0',"total_incone":'0',"book_overdue":'0',"total_overdue_collect":'0'};
+  dynamic dash = {
+    "total_count": '0',
+    "total_incone": '0',
+    "book_overdue": '0',
+    "total_overdue_collect": '0'
+  };
   @override
   void initState() {
     super.initState();
@@ -39,7 +45,7 @@ class LendBookHomeScreenState extends State<LendBookHomeScreen> {
   }
 
   void loadDash() {
-   requestRouter.get(
+    requestRouter.get(
         'renter-dash',
         {'page': '1'},
         RequestCallbacks(
@@ -51,6 +57,7 @@ class LendBookHomeScreenState extends State<LendBookHomeScreen> {
             },
             onError: (error) {}));
   }
+
   void loadNewArrivals() {
     requestRouter.get(
         'books-for-rent',
@@ -59,13 +66,13 @@ class LendBookHomeScreenState extends State<LendBookHomeScreen> {
             onSuccess: (response) {
               Map<String, dynamic> jsonMap = json.decode(response);
               setState(() {
-                  newArrBook = jsonMap['books']['data'];
-                });
+                newArrBook = jsonMap['books']['data'];
+              });
             },
             onError: (error) {}));
   }
 
-    void loadBookOnRent() {
+  void loadBookOnRent() {
     requestRouter.get(
         'books-on-rent',
         {"renter": 'true'},
@@ -74,32 +81,15 @@ class LendBookHomeScreenState extends State<LendBookHomeScreen> {
               Map<dynamic, dynamic> jsonMap = json.decode(response);
               List booksOnRentTemp = [];
               jsonMap['books'].forEach((item) {
-                item['images'] = json.decode(item['images'] ?? '{"smallThumbnail": ""}');
+                item['images'] =
+                    json.decode(item['images'] ?? '{"smallThumbnail": ""}');
                 booksOnRentTemp.add(item);
               });
               setState(() {
                 booksOnRent = booksOnRentTemp;
-                getRemaningValue(booksOnRent[0]);
               });
             },
             onError: (error) {}));
-  }
-
-  String getReturnDate(books) {
-    DateTime inputDate = DateFormat("yyyy-MM-dd").parse(books['rent_end_date']);
-    return  DateFormat("d'th' MMMM yyyy").format(inputDate);
-  }
-
-  double getRemaningValue(books) {
-    DateTime startDate = DateTime.parse(books['rent_start_date']);
-    DateTime endDate = DateTime.parse(books['rent_end_date']);
-    DateTime now = DateTime.now();
-    Duration diff1 = endDate.difference(startDate);
-    Duration diff2 = endDate.difference(now);
-   if(diff1.inDays - diff2.inDays > 0) {
-    return (diff1.inDays - diff2.inDays) / diff1.inDays ;
-   }
-   return 0;
   }
 
   @override
@@ -196,7 +186,7 @@ class LendBookHomeScreenState extends State<LendBookHomeScreen> {
                             textAlign: TextAlign.left,
                           ),
                           Text(
-                             "${dash['total_incone']}",
+                            "${dash['total_incone']}",
                             style: const TextStyle(
                               color: const Color(0xff000000),
                               fontWeight: FontWeight.w700,
@@ -285,7 +275,7 @@ class LendBookHomeScreenState extends State<LendBookHomeScreen> {
                             textAlign: TextAlign.left,
                           ),
                           Text(
-                             "${dash['total_overdue_collect']}",
+                            "${dash['total_overdue_collect']}",
                             style: const TextStyle(
                               color: const Color(0xff000000),
                               fontWeight: FontWeight.w700,
@@ -376,9 +366,9 @@ class LendBookHomeScreenState extends State<LendBookHomeScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text("On rent",
-                      style: const TextStyle(
-                          color: const Color(0xff000000),
+                  const Text("On rent",
+                      style: TextStyle(
+                          color: Color(0xff000000),
                           fontWeight: FontWeight.w700,
                           fontStyle: FontStyle.normal,
                           fontSize: 16.0),
@@ -387,8 +377,8 @@ class LendBookHomeScreenState extends State<LendBookHomeScreen> {
                     onTap: () {
                       GoRouter.of(context).push("/rent");
                     },
-                    child: Text("View More >",
-                        style: const TextStyle(
+                    child: const Text("View More >",
+                        style: TextStyle(
                             color: lentThemePrimary,
                             fontWeight: FontWeight.w700,
                             fontStyle: FontStyle.normal,
@@ -397,19 +387,23 @@ class LendBookHomeScreenState extends State<LendBookHomeScreen> {
                   )
                 ],
               ),
-               SizedBox(
+              SizedBox(
                 height: 2.h,
               ),
               Container(
-                      height: 40.w, // Adjust the height as needed
-                      child: ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        itemCount:
-                            booksOnRent.length, // Number of items in the list
-                        itemBuilder: (BuildContext context, int index) {
-                          Map<String, dynamic> images =
-                              json.decode(newArrBook[index]['images']);
-                          return Padding(
+                  height: 40.w, // Adjust the height as needed
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount:
+                        booksOnRent.length, // Number of items in the list
+                    itemBuilder: (BuildContext context, int index) {
+                      Map<String, dynamic> images =
+                          json.decode(newArrBook[index]['images']);
+                      return InkWell(
+                          onTap: () {
+                            GoRouter.of(context).push("/rent");
+                          },
+                          child: Padding(
                             padding: const EdgeInsets.only(right: 15.0),
                             child: Container(
                               width: 30.w,
@@ -422,98 +416,109 @@ class LendBookHomeScreenState extends State<LendBookHomeScreen> {
                                 ),
                               ),
                             ),
-                          );
-                        },
-                      )),
+                          ));
+                    },
+                  )),
             ],
           ),
         ),
-        booksOnRent.isNotEmpty ? 
-        Positioned(
-          bottom: 0,
-          left: 0,
-          child: Container(
-            width: 100.w,
-            height: 23.w,
-            color: Colors.transparent,
-            child: Stack(
-              children: [
-                Positioned(
-                    bottom: 0,
-                    left: 0,
-                    right: 0,
-                    child: Container(
-                      height: 16.w,
-                      decoration: BoxDecoration(
-                        color: lentThemePrimary,
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(20.0),
-                          topRight: Radius.circular(20.0),
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withOpacity(0.3),
-                            spreadRadius: 2,
-                            blurRadius: 4,
-                            offset:
-                                Offset(0, -2), // Adjust the offset as needed
-                          ),
-                        ],
-                      ),
-                    )),
-                Positioned(
-                    bottom: 2,
-                    left: 5.w,
-                    child: Row(children: [
-                      Container(
-                        width: 15.w,
-                        height: 20.w,
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(8.0),
-                          child: Image.network(
-                            booksOnRent[0]['images']['smallThumbnail'].toString(),
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        width: 10.w,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Column(
-                          children: [
-                            SizedBox(
-                              height: 2.h,
-                            ),
-                            Text("Rented from Mr. ${ booksOnRent[0]['name']}",
-                                style: TextStyle(
-                                    color: const Color(0xffffffff),
-                                    fontWeight: FontWeight.w400,
-                                    fontStyle: FontStyle.normal,
-                                    fontSize: 10.0),
-                                textAlign: TextAlign.center),
-                            Text("Return by  ${getReturnDate(booksOnRent[0])}",
-                                style: TextStyle(
-                                    color: const Color(0xffffffff),
-                                    fontWeight: FontWeight.w700,
-                                    fontStyle: FontStyle.normal,
-                                    fontSize: 12.0),
-                                textAlign: TextAlign.start),
-                            SizedBox(
-                              width: 50.w,
-                              child: LinearProgressIndicator(
-                                value: getRemaningValue(booksOnRent[0]),
+        booksOnRent.isNotEmpty
+            ? Positioned(
+                bottom: 0,
+                left: 0,
+                child: InkWell(
+                  onTap: () {
+                    GoRouter.of(context).push("/rent");
+                  },
+                  child: Container(
+                    width: 100.w,
+                    height: 23.w,
+                    color: Colors.transparent,
+                    child: Stack(
+                      children: [
+                        Positioned(
+                            bottom: 0,
+                            left: 0,
+                            right: 0,
+                            child: Container(
+                              height: 16.w,
+                              decoration: BoxDecoration(
+                                color: lentThemePrimary,
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(20.0),
+                                  topRight: Radius.circular(20.0),
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.withOpacity(0.3),
+                                    spreadRadius: 2,
+                                    blurRadius: 4,
+                                    offset: Offset(
+                                        0, -2), // Adjust the offset as needed
+                                  ),
+                                ],
                               ),
-                            )
-                          ],
-                        ),
-                      ),
-                    ]))
-              ],
-            ),
-          ),
-        ): SizedBox(height: 0,),
+                            )),
+                        Positioned(
+                            bottom: 2,
+                            left: 5.w,
+                            child: Row(children: [
+                              Container(
+                                width: 15.w,
+                                height: 20.w,
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                  child: Image.network(
+                                    booksOnRent[0]['images']['smallThumbnail']
+                                        .toString(),
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                width: 10.w,
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Column(
+                                  children: [
+                                    SizedBox(
+                                      height: 2.h,
+                                    ),
+                                    Text(
+                                        "Rented from Mr. ${booksOnRent[0]['name']}",
+                                        style: const TextStyle(
+                                            color: Color(0xffffffff),
+                                            fontWeight: FontWeight.w400,
+                                            fontStyle: FontStyle.normal,
+                                            fontSize: 10.0),
+                                        textAlign: TextAlign.center),
+                                    Text(
+                                        "Return by  ${Helper.getReturnDate(booksOnRent[0])}",
+                                        style: const TextStyle(
+                                            color: Color(0xffffffff),
+                                            fontWeight: FontWeight.w700,
+                                            fontStyle: FontStyle.normal,
+                                            fontSize: 12.0),
+                                        textAlign: TextAlign.start),
+                                    SizedBox(
+                                      width: 50.w,
+                                      child: LinearProgressIndicator(
+                                        value: Helper.getRemaningValue(
+                                            booksOnRent[0]),
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ]))
+                      ],
+                    ),
+                  ),
+                ))
+            : SizedBox(
+                height: 0,
+              ),
       ]),
     );
   }

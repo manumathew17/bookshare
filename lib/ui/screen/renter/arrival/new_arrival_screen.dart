@@ -15,8 +15,8 @@ import '../../../../widget/components/not_found.dart';
 import '../../../../widget/components/shimmer_general.dart';
 
 class NewArrivalScreen extends StatefulWidget {
-  const NewArrivalScreen({super.key});
-
+  const NewArrivalScreen({super.key, this.category});
+  final String? category;
   @override
   NewArrivalState createState() => NewArrivalState();
 }
@@ -26,17 +26,24 @@ class NewArrivalState extends State<NewArrivalScreen> {
   List parentList = [];
   List newArrBook = [];
   String q = "";
-
   bool _notFound = false;
   bool _loading = false;
 
   @override
   void initState() {
     super.initState();
+    if (widget.category!.isNotEmpty) {
+      setState(() {
+        q = widget.category!;
+      });
+    }
     loadNewArrivals();
   }
 
   void loadNewArrivals() {
+    if(_loading) {
+      return;
+    }
     setState(() {
       _loading = true;
     });
