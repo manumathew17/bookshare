@@ -81,18 +81,18 @@ class ReturnedScreenState extends State<ReturnedScreen> {
                             padding: const EdgeInsets.only(top: 0, bottom: 20, left: 15, right: 15),
                             child: GestureDetector(
                               onTap: () => {
-                                showModalBottomSheet(
-                                  context: context,
-                                  isScrollControlled: true,
-                                  useSafeArea: true,
-                                  builder: (BuildContext context) {
-                                    return Padding(
-                                      padding: MediaQuery.of(context).viewInsets,
-                                      child:
-                                          const BookHistory(), //for entering amount and wave off    //  return AcceptReturn(); // fo no penalty and accept return
-                                    );
-                                  },
-                                )
+                                // showModalBottomSheet(
+                                //   context: context,
+                                //   isScrollControlled: true,
+                                //   useSafeArea: true,
+                                //   builder: (BuildContext context) {
+                                //     return Padding(
+                                //       padding: MediaQuery.of(context).viewInsets,
+                                //       child:
+                                //           const BookHistory(), //for entering amount and wave off    //  return AcceptReturn(); // fo no penalty and accept return
+                                //     );
+                                //   },
+                                // )
                               },
                               child: Container(
                                 decoration: generalBoxDecoration,

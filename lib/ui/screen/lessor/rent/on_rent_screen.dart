@@ -100,7 +100,9 @@ class OnRentScreenState extends State<OnRentScreen> {
               );
               loadBookOnRent();
             },
-            onError: (error) {}));
+            onError: (error) {
+              loadBookOnRent();
+            }));
   }
 
   String getRemaningValue(books) {

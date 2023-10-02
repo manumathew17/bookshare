@@ -9,6 +9,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 
+import '../../../../provider/book/my_book_provider.dart';
 import '../../../../theme/app_style.dart';
 import '../../../../widget/components/home_addBook.dart';
 import '../../../../widget/components/shimmer_container.dart';
@@ -26,11 +27,11 @@ class LendMyBookScreen extends StatefulWidget {
 class LendMyBookScreenState extends State<LendMyBookScreen> {
   late GeneralSnackBar _generalSnackBar;
   final ScrollController _scrollController = ScrollController();
-  late BookProvider _bookProvider;
+  late MyBookProvider _bookProvider;
 
   @override
   void initState() {
-    _bookProvider = Provider.of<BookProvider>(context, listen: false);
+    _bookProvider = Provider.of<MyBookProvider>(context, listen: false);
     _generalSnackBar = GeneralSnackBar(context);
     _scrollController.addListener(_scrollListener);
     _bookProvider.queryParams['page'] = 1;
@@ -64,7 +65,7 @@ class LendMyBookScreenState extends State<LendMyBookScreen> {
   @override
   Widget build(BuildContext context) {
 
-    return Consumer<BookProvider>(builder: (context, bookProvider, child) {
+    return Consumer<MyBookProvider>(builder: (context, bookProvider, child) {
       return Scaffold(
           body:
           bookProvider.isLoading ? const GeneralShimmer() :
