@@ -39,6 +39,10 @@ class LendBookHomeScreenState extends State<LendBookHomeScreen> {
   @override
   void initState() {
     super.initState();
+    loadData();
+  }
+
+  loadData() {
     loadNewArrivals();
     loadBookOnRent();
     loadDash();
@@ -298,22 +302,15 @@ class LendBookHomeScreenState extends State<LendBookHomeScreen> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text("My Books",
-                      style: const TextStyle(
-                          color: const Color(0xff000000),
-                          fontWeight: FontWeight.w700,
-                          fontStyle: FontStyle.normal,
-                          fontSize: 16.0),
+                      style:
+                          const TextStyle(color: const Color(0xff000000), fontWeight: FontWeight.w700, fontStyle: FontStyle.normal, fontSize: 16.0),
                       textAlign: TextAlign.center),
                   GestureDetector(
                     onTap: () {
-                      GoRouter.of(context).push("/lend-book");
+                      GoRouter.of(context).push("/lend-book").then((value) => loadData());
                     },
                     child: Text("View More >",
-                        style: const TextStyle(
-                            color: lentThemePrimary,
-                            fontWeight: FontWeight.w700,
-                            fontStyle: FontStyle.normal,
-                            fontSize: 10.0),
+                        style: const TextStyle(color: lentThemePrimary, fontWeight: FontWeight.w700, fontStyle: FontStyle.normal, fontSize: 10.0),
                         textAlign: TextAlign.center),
                   )
                 ],
@@ -323,14 +320,11 @@ class LendBookHomeScreenState extends State<LendBookHomeScreen> {
               ),
               newArrBook.length == 0
                   ? Container(
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(9)),
-                          color: const Color(0xffe7e9f1)),
+                      decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(9)), color: const Color(0xffe7e9f1)),
                       child: Padding(
                         padding: const EdgeInsets.only(top: 10, bottom: 10),
                         child: AddBookHome(
-                          onClick: () =>
-                              {GoRouter.of(context).push("/lend-book")},
+                          onClick: () => {GoRouter.of(context).push("/lend-book").then((value) => loadData())},
                         ),
                       ),
                     )
@@ -338,11 +332,9 @@ class LendBookHomeScreenState extends State<LendBookHomeScreen> {
                       height: 40.w, // Adjust the height as needed
                       child: ListView.builder(
                         scrollDirection: Axis.horizontal,
-                        itemCount:
-                            newArrBook.length, // Number of items in the list
+                        itemCount: newArrBook.length, // Number of items in the list
                         itemBuilder: (BuildContext context, int index) {
-                          Map<String, dynamic> images =
-                              json.decode(newArrBook[index]['images'] ?? '{}');
+                          Map<String, dynamic> images = json.decode(newArrBook[index]['images'] ?? '{}');
                           return Padding(
                             padding: const EdgeInsets.only(right: 15.0),
                             child: Container(
@@ -353,6 +345,11 @@ class LendBookHomeScreenState extends State<LendBookHomeScreen> {
                                 child: Image.network(
                                   images['smallThumbnail'].toString(),
                                   fit: BoxFit.cover,
+                                  errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+                                    // Return a default image widget when the network image fails to load
+                                    return Image.asset('assets/icons/book-stack.png', // Replace with the path to your default image asset
+                                        fit: BoxFit.contain);
+                                  },
                                 ),
                               ),
                             ),
@@ -375,7 +372,7 @@ class LendBookHomeScreenState extends State<LendBookHomeScreen> {
                       textAlign: TextAlign.center),
                   GestureDetector(
                     onTap: () {
-                      GoRouter.of(context).push("/rent");
+                      GoRouter.of(context).push("/rent").then((value) => loadData());
                     },
                     child: const Text("View More >",
                         style: TextStyle(
@@ -409,9 +406,9 @@ class LendBookHomeScreenState extends State<LendBookHomeScreen> {
                               width: 30.w,
                               height: 35.w,
                               child: ClipRRect(
-                                borderRadius: BorderRadius.circular(20),
+                                borderRadius: BorderRadius.circular(8.0),
                                 child: Image.network(
-                                  images['smallThumbnail'].toString(),
+                                  booksOnRent[0]['images']['smallThumbnail'].toString(),
                                   fit: BoxFit.cover,
                                 ),
                               ),

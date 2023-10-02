@@ -1,5 +1,6 @@
 import 'package:bookshare/provider/auth/auth_provider.dart';
 import 'package:bookshare/provider/book/book_provider.dart';
+import 'package:bookshare/provider/book/my_book_provider.dart';
 import 'package:bookshare/theme/app-theme.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -21,7 +22,9 @@ class MyApp extends StatelessWidget {
       return MultiProvider(
           providers: [
             ChangeNotifierProvider(create: (_) => AuthProvider()),
-            ChangeNotifierProvider(create: (_) => BookProvider())],
+            ChangeNotifierProvider(create: (_) => BookProvider()),
+            ChangeNotifierProvider(create: (_) => MyBookProvider())
+          ],
           child: MaterialApp.router(
               title: 'Flutter Demo',
               theme: ThemeData(
